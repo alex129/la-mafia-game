@@ -1,11 +1,13 @@
 <script setup lang="ts">
+type ButtonType = "primary" | "secondary" | "danger";
+
 defineProps<{
-  type?: "primary" | "secondary" | "danger";
+  type?: ButtonType;
   disabled?: boolean;
   loading?: boolean;
 }>();
 
-const getButtonClass = (type: string = "primary") => {
+const getButtonClass = (type: ButtonType = "primary") => {
   const baseClass =
     "w-full py-2 px-4 rounded-md border-2 border-[#404040] transition-colors duration-200 cursor-pointer flex items-center justify-center gap-2 font-[Press Start 2P] text-sm";
 
