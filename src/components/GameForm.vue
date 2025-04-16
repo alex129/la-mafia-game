@@ -3,10 +3,9 @@ import { ref, computed } from "vue";
 import { GameSchema, PlayerSchema, type Player } from "../schemas/game";
 import { GameService } from "../services/game";
 const players = ref<Player[]>([]);
-const newPlayer = ref<Player>({ name: "", email: "" });
+const newPlayer = ref<Player>({ name: "" });
 const errors = ref<string[]>([]);
 const nameError = ref<string>("");
-const emailError = ref<string>("");
 const isLoading = ref(false);
 const gameCreated = ref(false);
 
@@ -15,20 +14,16 @@ const validatePlayer = () => {
 
   if (result.success) {
     nameError.value = "";
-    emailError.value = "";
     return true;
   } else {
     // Reset errors
     nameError.value = "";
-    emailError.value = "";
 
     // Map errors to specific fields
     result.error.errors.forEach((error) => {
       const path = error.path[0];
       if (path === "name") {
         nameError.value = error.message;
-      } else if (path === "email") {
-        emailError.value = error.message;
       }
     });
 
@@ -39,7 +34,7 @@ const validatePlayer = () => {
 const addPlayer = () => {
   if (validatePlayer()) {
     players.value.push(newPlayer.value);
-    newPlayer.value = { name: "", email: "" };
+    newPlayer.value = { name: "" };
     errors.value = [];
   }
 };
@@ -87,8 +82,7 @@ const createGameHandler = async () => {
         ¡Partida Creada!
       </h3>
       <p class="text-green-600">
-        Se han enviado los emails a todos los jugadores con sus objetivos y
-        acciones.
+        Se han descargado los archivos con las misiones de cada jugador.
       </p>
     </div>
 
@@ -109,18 +103,6 @@ const createGameHandler = async () => {
             />
             <p v-if="nameError" class="mt-1 text-sm text-red-600">
               {{ nameError }}
-            </p>
-          </div>
-          <div>
-            <input
-              v-model="newPlayer.email"
-              type="email"
-              placeholder="Email del jugador"
-              class="w-full px-4 py-2 rounded-lg border-2 border-purple-300 focus:border-purple-500 focus:outline-none"
-              :class="{ 'border-red-500': emailError }"
-            />
-            <p v-if="emailError" class="mt-1 text-sm text-red-600">
-              {{ emailError }}
             </p>
           </div>
           <button
@@ -150,7 +132,6 @@ const createGameHandler = async () => {
           >
             <div>
               <p class="font-medium text-purple-800">{{ player.name }}</p>
-              <p class="text-sm text-purple-600">{{ player.email }}</p>
             </div>
             <button
               @click="removePlayer(index)"

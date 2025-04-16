@@ -1,5 +1,5 @@
 import { type Player, type GameAssignment, GameSchema } from "../schemas/game";
-import { sendGameAssignment } from "./email";
+import { createGameAssignmentFile, downloadFile } from "./file";
 
 export class GameService {
   private static shuffleArray<T>(array: T[]): T[] {
@@ -64,8 +64,13 @@ export class GameService {
         mafia: [player], // Initially, the mafia only contains the player themselves
       });
 
-      // Send email to the player
-      await sendGameAssignment(player.email, player.name, target.name, action);
+      // Create and download file for the player
+      const fileUrl = createGameAssignmentFile(
+        player.name,
+        target.name,
+        action
+      );
+      downloadFile(fileUrl, `mafia-game-${player.name}.txt`);
     }
 
     return assignments;
