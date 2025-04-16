@@ -59,6 +59,9 @@ const createGameHandler = async () => {
 
     await GameService.createGame(result.data.players);
     gameCreated.value = true;
+    setTimeout(() => {
+      window.location.href = "/games";
+    }, 3000);
   } catch (error) {
     if (error instanceof Error) {
       errors.value = [error.message];
