@@ -1,0 +1,13 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PlayerDetails from '../../components/PlayerDetails.vue';
+
+const { id } = Astro.params;
+if (!id) {
+  return Astro.redirect('/games');
+}
+---
+
+<Layout title="Player Details">
+  <PlayerDetails playerId={id} client:load />
+</Layout> 

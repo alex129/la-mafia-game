@@ -1,6 +1,6 @@
 import { type Player, type GameAssignment, GameSchema } from "../schemas/game";
 import { createGameAssignmentFile, downloadFile } from "./file";
-
+import { createGame } from "./api";
 export class GameService {
   private static async generateAction(): Promise<string> {
     try {
@@ -54,14 +54,15 @@ export class GameService {
         action,
         mafia: [player],
       });
-
-      const fileUrl = createGameAssignmentFile(
-        player.name,
-        target.name,
-        action
-      );
-      downloadFile(fileUrl, `mafia-game-${player.name}.txt`);
     }
+
+    await createGame(
+      assignments.map((assignment) => ({
+        name: assignment.player.name,
+        action: assignment.action,
+        role: "Player",
+      }))
+    );
 
     return assignments;
   }
