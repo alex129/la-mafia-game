@@ -2,6 +2,14 @@
 import { ref, computed } from "vue";
 import { GameSchema, PlayerSchema, type Player } from "../schemas/game";
 import { GameService } from "../services/game";
+import {
+  UserPlusIcon,
+  TrashIcon,
+  UserIcon,
+  PlusIcon,
+  ArrowPathIcon,
+} from "@heroicons/vue/24/outline";
+
 const players = ref<Player[]>([]);
 const newPlayer = ref<Player>({ name: "" });
 const errors = ref<string[]>([]);
@@ -71,25 +79,28 @@ const createGameHandler = async () => {
 
 <template>
   <div
-    class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200"
+    class="max-w-2xl mx-auto p-6 bg-[#18100d] rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 border border-[#ddc5c1]"
   >
-    <h2 class="text-3xl font-bold text-center mb-8 text-purple-600">
+    <h2 class="text-3xl font-bold text-center mb-8 text-[#bc0a0f]">
       🎮 La Mafia Game
     </h2>
 
-    <div v-if="gameCreated" class="mb-8 p-6 bg-green-50 rounded-lg text-center">
-      <h3 class="text-xl font-semibold mb-4 text-green-700">
+    <div
+      v-if="gameCreated"
+      class="mb-8 p-6 bg-[#18100d] rounded-lg text-center border border-[#059dc6]"
+    >
+      <h3 class="text-xl font-semibold mb-4 text-[#059dc6]">
         ¡Partida Creada!
       </h3>
-      <p class="text-green-600">
+      <p class="text-[#ddc5c1]">
         Se han descargado los archivos con las misiones de cada jugador.
       </p>
     </div>
 
     <div v-else>
       <!-- Player Form -->
-      <div class="mb-8 p-6 bg-purple-50 rounded-lg">
-        <h3 class="text-xl font-semibold mb-4 text-purple-700">
+      <div class="mb-8 p-6 bg-[#18100d] rounded-lg border border-[#ddc5c1]">
+        <h3 class="text-xl font-semibold mb-4 text-[#bc0a0f]">
           Añadir Jugador
         </h3>
         <div class="space-y-4">
@@ -98,46 +109,51 @@ const createGameHandler = async () => {
               v-model="newPlayer.name"
               type="text"
               placeholder="Nombre del jugador"
-              class="w-full px-4 py-2 rounded-lg border-2 border-purple-300 focus:border-purple-500 focus:outline-none"
-              :class="{ 'border-red-500': nameError }"
+              class="w-full px-4 py-2 rounded-lg border-2 border-[#ddc5c1] bg-[#18100d] text-[#ddc5c1] focus:border-[#059dc6] focus:outline-none placeholder-[#ddc5c1]/50"
+              :class="{ 'border-[#bc0a0f]': nameError }"
             />
-            <p v-if="nameError" class="mt-1 text-sm text-red-600">
+            <p v-if="nameError" class="mt-1 text-sm text-[#bc0a0f]">
               {{ nameError }}
             </p>
           </div>
           <button
             @click="addPlayer"
-            class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 cursor-pointer"
+            class="w-full bg-[#bc0a0f] text-[#ddc5c1] py-2 px-4 rounded-lg hover:bg-[#bc0a0f]/80 transition-colors duration-200 cursor-pointer flex items-center justify-center gap-2"
           >
+            <UserPlusIcon class="w-5 h-5" />
             Añadir Jugador
           </button>
         </div>
       </div>
 
       <!-- Global Error Messages -->
-      <div v-if="errors.length" class="mb-4 p-4 bg-red-100 rounded-lg">
-        <ul class="list-disc list-inside text-red-600">
+      <div
+        v-if="errors.length"
+        class="mb-4 p-4 bg-[#bc0a0f]/20 rounded-lg border border-[#bc0a0f]"
+      >
+        <ul class="list-disc list-inside text-[#bc0a0f]">
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </div>
 
       <!-- Players List -->
       <div class="mb-8">
-        <h3 class="text-xl font-semibold mb-4 text-purple-700">Jugadores</h3>
+        <h3 class="text-xl font-semibold mb-4 text-[#bc0a0f]">Jugadores</h3>
         <div class="space-y-2">
           <div
             v-for="(player, index) in players"
             :key="index"
-            class="flex items-center justify-between p-4 bg-purple-50 rounded-lg"
+            class="flex items-center justify-between p-4 bg-[#18100d] rounded-lg border border-[#ddc5c1]"
           >
-            <div>
-              <p class="font-medium text-purple-800">{{ player.name }}</p>
+            <div class="flex items-center gap-2">
+              <UserIcon class="w-5 h-5 text-[#059dc6]" />
+              <p class="font-medium text-[#ddc5c1]">{{ player.name }}</p>
             </div>
             <button
               @click="removePlayer(index)"
-              class="text-red-500 hover:text-red-700 cursor-pointer"
+              class="text-[#bc0a0f] hover:text-[#bc0a0f]/80 cursor-pointer"
             >
-              🗑️
+              <TrashIcon class="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -147,8 +163,9 @@ const createGameHandler = async () => {
       <button
         @click="createGameHandler"
         :disabled="players.length < 2 || isLoading"
-        class="w-full bg-green-600 text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+        class="w-full bg-[#059dc6] text-[#ddc5c1] py-3 px-6 rounded-lg text-lg font-semibold hover:bg-[#059dc6]/80 transition-colors duration-200 disabled:bg-[#18100d] disabled:border disabled:border-[#ddc5c1] disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
       >
+        <ArrowPathIcon v-if="isLoading" class="w-5 h-5 animate-spin" />
         <span v-if="isLoading">Creando partida...</span>
         <span v-else>Crear Partida</span>
       </button>
