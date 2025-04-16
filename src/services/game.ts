@@ -1,5 +1,4 @@
-import { type Player, type GameAssignment, GameSchema } from "../schemas/game";
-import { createGameAssignmentFile, downloadFile } from "./file";
+import { type GameAssignment, GameSchema, type Player } from "../schemas/game";
 import { createGame } from "./api";
 export class GameService {
   private static async generateAction(): Promise<string> {
@@ -60,7 +59,7 @@ export class GameService {
       assignments.map((assignment) => ({
         name: assignment.player.name,
         action: assignment.action,
-        role: "Player",
+        target: assignment.target.name,
       }))
     );
 

@@ -31,3 +31,11 @@ export async function createGame(
   const data = await response.json();
   return data.game;
 }
+
+export async function cleanupGames(): Promise<boolean> {
+  const response = await fetch("/api/games/cleanup", {
+    method: "POST",
+  });
+  const data = await response.json();
+  return data.success;
+}

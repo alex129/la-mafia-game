@@ -32,7 +32,7 @@
         <div class="flex justify-between items-start">
           <div>
             <h2 class="text-xl font-semibold mb-2">{{ player.name }}</h2>
-            <p class="text-gray-600 mb-4">Role: {{ player.role }}</p>
+            <p class="text-gray-600 mb-4">Target: {{ player.target }}</p>
           </div>
           <div class="flex flex-col items-end gap-2">
             <button
@@ -64,7 +64,7 @@ const props = defineProps<{
 }>();
 
 const game = ref<Game | null>(null);
-const origin = typeof window !== 'undefined' ? window.location.origin : '';
+const origin = typeof window !== "undefined" ? window.location.origin : "";
 
 async function fetchGame() {
   try {

@@ -11,6 +11,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export interface Game {
   id: string;
+  name: string;
   created_at: string;
   players: Player[];
 }
@@ -18,7 +19,7 @@ export interface Game {
 export interface Player {
   id: string;
   name: string;
-  role: string;
+  target: string;
   action: string;
   game_id: string;
 }

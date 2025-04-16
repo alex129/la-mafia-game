@@ -5,8 +5,8 @@
 
       <div class="space-y-6">
         <div>
-          <h2 class="text-xl font-semibold mb-2">Your Role</h2>
-          <p class="text-gray-700">{{ player?.role }}</p>
+          <h2 class="text-xl font-semibold mb-2">Your Target</h2>
+          <p class="text-gray-700">{{ player?.target }}</p>
         </div>
 
         <div>
