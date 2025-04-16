@@ -34,7 +34,7 @@ onMounted(() => {
           <div>
             <h2 class="text-xl font-semibold">{{ game.id }}</h2>
             <p class="text-gray-600">
-              Created: {{ formatDate(game.created_at) }}
+              Created: {{ formatDate(game.created_at) }} at {{ new Date(game.created_at).toLocaleTimeString() }}
             </p>
           </div>
           <svg
