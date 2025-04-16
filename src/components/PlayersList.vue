@@ -16,15 +16,15 @@ defineEmits<{
     <div
       v-for="(player, index) in players"
       :key="index"
-      class="flex items-center justify-between p-4 bg-[#9bbc0f] rounded-none border-4 border-[#0f380f]"
+      class="flex items-center justify-between p-4 bg-[#333333] rounded-md border-2 border-[#404040]"
     >
       <div class="flex items-center gap-2">
-        <UserIcon class="w-4 h-4 text-[#306230]" />
-        <p class="font-medium text-[#0f380f] text-sm">{{ player.name }}</p>
+        <UserIcon class="w-4 h-4 text-[#0095ff]" />
+        <p class="font-medium text-white text-sm">{{ player.name }}</p>
       </div>
       <button
         @click="$emit('remove', index)"
-        class="text-[#306230] hover:text-[#0f380f] cursor-pointer"
+        class="text-[#ff0000] hover:text-[#ff0000]/80 cursor-pointer"
       >
         <TrashIcon class="w-4 h-4" />
       </button>

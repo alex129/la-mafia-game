@@ -73,26 +73,31 @@ const createGameHandler = async () => {
 
 <template>
   <div
-    class="max-w-2xl mx-auto p-6 bg-[#c4cfa1] rounded-md shadow-lg transform hover:scale-105 transition-transform duration-200 border-4 border-[#0f380f]"
+    class="max-w-2xl mx-auto p-6 bg-[#808080] rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 border-4 border-[#666666]"
   >
     <h2
-      class="text-2xl font-bold text-center mb-8 text-[#0f380f] tracking-wider"
+      class="text-2xl font-bold text-center mb-8 text-white tracking-wider flex gap-5 items-center justify-center"
     >
-      🎮 La Mafia Game
+      <img
+        src="/game-over.png"
+        alt="La Mafia Game"
+        class="w-8 h-8 bg-transparent"
+      />
+      <span>La Mafia Game</span>
     </h2>
 
-    <RetroCard v-if="gameCreated" class="bg-[#8bac0f]">
-      <h3 class="text-xl font-semibold mb-4 text-[#0f380f]">
+    <RetroCard v-if="gameCreated" class="bg-[#404040]">
+      <h3 class="text-xl font-semibold mb-4 text-[#00ff00]">
         ¡Partida Creada!
       </h3>
-      <p class="text-[#306230]">
+      <p class="text-white">
         Se han descargado los archivos con las misiones de cada jugador.
       </p>
     </RetroCard>
 
     <div v-else>
       <!-- Player Form -->
-      <RetroCard title="Añadir Jugador">
+      <RetroCard title="Añadir Jugador" class="bg-[#404040]">
         <div class="space-y-4">
           <RetroInput
             v-model="newPlayer.name"
@@ -109,14 +114,14 @@ const createGameHandler = async () => {
       </RetroCard>
 
       <!-- Global Error Messages -->
-      <RetroCard v-if="errors.length" class="bg-[#8b945f]">
-        <ul class="list-disc list-inside text-[#0f380f] text-sm">
+      <RetroCard v-if="errors.length" class="bg-[#404040]">
+        <ul class="list-disc list-inside text-[#ff0000] text-sm">
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </RetroCard>
 
       <!-- Players List -->
-      <RetroCard title="Jugadores">
+      <RetroCard title="Jugadores" class="bg-[#404040]">
         <PlayersList :players="players" @remove="removePlayer" />
       </RetroCard>
 
@@ -125,6 +130,7 @@ const createGameHandler = async () => {
         @click="createGameHandler"
         :disabled="players.length < 2 || isLoading"
         :loading="isLoading"
+        type="primary"
       >
         <template #icon>
           <ArrowPathIcon v-if="isLoading" class="w-4 h-4 animate-spin" />
@@ -136,6 +142,10 @@ const createGameHandler = async () => {
 </template>
 
 <style scoped>
+.bg-gradient-playstation {
+  background: linear-gradient(145deg, #808080 0%, #666666 100%);
+}
+
 input::placeholder {
   font-size: 10px;
 }
