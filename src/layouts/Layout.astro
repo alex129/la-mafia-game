@@ -10,10 +10,14 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>La Mafia Game</title>
+		<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 	</head>
-	<body class="bg-[#18100d] min-h-screen">
-		<div class="min-h-screen bg-[#18100d] bg-opacity-95">
-			<slot />
+	<body class="bg-[#9ba657] min-h-screen">
+		<div class="min-h-screen bg-[#9ba657] relative">
+			<div class="absolute inset-0" style="background-image: radial-gradient(#8b945f 2px, transparent 2px); background-size: 32px 32px;"></div>
+			<div class="relative">
+				<slot />
+			</div>
 		</div>
 	</body>
 </html>
@@ -24,12 +28,7 @@
 		margin: 0;
 		width: 100%;
 		height: 100%;
-		background-color: #18100d;
-		background-image: 
-			radial-gradient(#ddc5c1 1px, transparent 1px),
-			radial-gradient(#ddc5c1 1px, transparent 1px);
-		background-size: 50px 50px;
-		background-position: 0 0, 25px 25px;
-		background-attachment: fixed;
+		font-family: 'Press Start 2P', cursive;
+		image-rendering: pixelated;
 	}
 </style>

@@ -2,15 +2,6 @@ import { type Player, type GameAssignment, GameSchema } from "../schemas/game";
 import { createGameAssignmentFile, downloadFile } from "./file";
 
 export class GameService {
-  private static shuffleArray<T>(array: T[]): T[] {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  }
-
   private static async generateAction(): Promise<string> {
     try {
       const response = await fetch("/api/generate-action", {
@@ -43,28 +34,27 @@ export class GameService {
       throw new Error("Se necesitan al menos 2 jugadores");
     }
 
-    // Shuffle players to assign random targets
-    const shuffledPlayers = this.shuffleArray(players);
     const assignments: GameAssignment[] = [];
 
-    // Assign targets and actions
-    for (let i = 0; i < players.length; i++) {
-      const player = players[i];
-      // Target is the next player in the shuffled array, or the first one if we're at the end
-      const targetIndex = (i + 1) % players.length;
-      const target = shuffledPlayers[targetIndex];
+    for (const player of players) {
+      const availableTargets = [
+        ...players.filter((p) => p.name !== player.name),
+      ];
 
-      // Generate a unique action for this player
+      const targetIndex = Math.floor(Math.random() * availableTargets.length);
+      const target = availableTargets[targetIndex];
+
+      availableTargets.splice(targetIndex, 1);
+
       const action = await this.generateAction();
 
       assignments.push({
         player,
         target,
         action,
-        mafia: [player], // Initially, the mafia only contains the player themselves
+        mafia: [player],
       });
 
-      // Create and download file for the player
       const fileUrl = createGameAssignmentFile(
         player.name,
         target.name,
