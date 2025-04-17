@@ -37,7 +37,7 @@ onMounted(() => {
           class="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <div class="flex justify-between items-center">
-            <div>
+            <div class="flex flex-col gap-2">
               <h2 class="text-xl font-semibold">{{ game.id }}</h2>
               <p class="text-gray-600">
                 Created: {{ formatDate(game.created_at) }}
