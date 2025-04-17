@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { GameSchema, PlayerSchema, type Player } from "../schemas/game";
 import { GameService } from "../services/game";
 import { PlusIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
@@ -16,6 +16,25 @@ const passwordError = ref<string>("");
 const password = ref("");
 const isLoading = ref(false);
 const gameCreated = ref(false);
+const countdown = ref(3);
+let countdownInterval: number | undefined;
+
+const startCountdown = () => {
+  countdown.value = 3;
+  countdownInterval = window.setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval);
+      window.location.href = "/games";
+    }
+  }, 1000);
+};
+
+onUnmounted(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+});
 
 const validatePlayer = () => {
   const result = PlayerSchema.safeParse(newPlayer.value);
@@ -77,9 +96,7 @@ const createGameHandler = async () => {
 
     await GameService.createGame(result.data.players, result.data.password);
     gameCreated.value = true;
-    setTimeout(() => {
-      window.location.href = "/games";
-    }, 3000);
+    startCountdown();
   } catch (error) {
     if (error instanceof Error) {
       errors.value = [error.message];
@@ -112,12 +129,18 @@ const createGameHandler = async () => {
         ¡Partida Creada!
       </h3>
       <p class="text-white">
-        Se han descargado los archivos con las misiones de cada jugador.
+        Vamos a redirigir a la página de partidas en {{ countdown }} segundos.
       </p>
+      <div class="flex justify-center items-center mt-10">
+        <img
+          src="/jaw.webp"
+          alt="La Mafia Game"
+          class="w-12 h-12 animate-bounce"
+        />
+      </div>
     </RetroCard>
 
     <div v-else>
-      <!-- Password Form -->
       <RetroCard title="Contraseña de la Partida" class="bg-[#404040] mb-4">
         <div class="space-y-4">
           <RetroInput
@@ -129,7 +152,6 @@ const createGameHandler = async () => {
         </div>
       </RetroCard>
 
-      <!-- Player Form -->
       <RetroCard title="Añadir Jugador" class="bg-[#404040]">
         <div class="space-y-4">
           <RetroInput
@@ -146,19 +168,16 @@ const createGameHandler = async () => {
         </div>
       </RetroCard>
 
-      <!-- Global Error Messages -->
       <RetroCard v-if="errors.length" class="bg-[#404040]">
         <ul class="list-disc list-inside text-[#ff0000] text-sm">
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </RetroCard>
 
-      <!-- Players List -->
       <RetroCard title="Jugadores" class="bg-[#404040]">
         <PlayersList :players="players" @remove="removePlayer" />
       </RetroCard>
 
-      <!-- Create Game Button -->
       <RetroButton
         @click="createGameHandler"
         :disabled="players.length < 2 || isLoading || !password"

@@ -15,7 +15,9 @@ function copyToClipboard(text: string) {
 
 <template>
   <div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex flex-col md:flex-row gap-4 justify-center md:justify-between items-center">
+    <div
+      class="flex flex-col md:flex-row gap-4 justify-center md:justify-between items-center"
+    >
       <div>
         <h2 class="text-xl font-semibold mb-2">{{ player.name }}</h2>
       </div>

@@ -3,6 +3,7 @@ defineProps<{
   modelValue: string;
   placeholder?: string;
   error?: string;
+  type?: string;
 }>();
 
 defineEmits<{
@@ -18,6 +19,7 @@ defineEmits<{
         $emit('update:modelValue', ($event.target as HTMLInputElement).value)
       "
       :placeholder="placeholder"
+      :type="type || 'text'"
       class="w-full px-4 py-2 rounded-md border-2 border-[#404040] bg-[#333333] text-white focus:border-[#0095ff] focus:outline-none placeholder-[#808080] font-[Press Start 2P] text-sm"
       :class="{ 'border-[#ff0000]': error }"
     />
