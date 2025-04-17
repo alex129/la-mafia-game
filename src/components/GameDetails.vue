@@ -8,15 +8,29 @@
     />
 
     <template v-else>
-      <h1 class="text-3xl font-bold mb-8">Detalles de la Partida</h1>
+      <div v-if="isLoading">
+        <div
+          class="flex justify-center items-center bg-white rounded-lg shadow-md p-5"
+        >
+          <img
+            src="/candy-bag.gif"
+            alt="candy la mafia loading"
+            class="w-12 h-12"
+          />
+        </div>
+      </div>
 
-      <div class="grid gap-6">
-        <PlayerCard
-          v-for="player in game?.players"
-          :key="player.id"
-          :player="player"
-          :origin="origin"
-        />
+      <div v-else>
+        <h1 class="text-3xl font-bold mb-8">Detalles de la Partida</h1>
+
+        <div class="grid gap-6">
+          <PlayerCard
+            v-for="player in game?.players"
+            :key="player.id"
+            :player="player"
+            :origin="origin"
+          />
+        </div>
       </div>
     </template>
   </div>
@@ -37,14 +51,18 @@ const props = defineProps<{
 const game = ref<Game | null>(null);
 const origin = typeof window !== "undefined" ? window.location.origin : "";
 const isVerified = ref(false);
+const isLoading = ref(true);
 
 async function fetchGame() {
+  isLoading.value = true;
   try {
     const response = await fetch(`/api/games/${props.gameId}`);
     const data = await response.json();
     game.value = data.game;
   } catch (error) {
     console.error("Error fetching game:", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
