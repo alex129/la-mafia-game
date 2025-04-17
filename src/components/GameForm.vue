@@ -12,6 +12,8 @@ const players = ref<Player[]>([]);
 const newPlayer = ref<Player>({ name: "" });
 const errors = ref<string[]>([]);
 const nameError = ref<string>("");
+const passwordError = ref<string>("");
+const password = ref("");
 const isLoading = ref(false);
 const gameCreated = ref(false);
 
@@ -33,6 +35,15 @@ const validatePlayer = () => {
   }
 };
 
+const validatePassword = () => {
+  if (password.value.length < 4) {
+    passwordError.value = "La contraseña debe tener al menos 4 caracteres";
+    return false;
+  }
+  passwordError.value = "";
+  return true;
+};
+
 const addPlayer = () => {
   if (validatePlayer()) {
     players.value.push(newPlayer.value);
@@ -47,7 +58,14 @@ const removePlayer = (index: number) => {
 
 const createGameHandler = async () => {
   try {
-    const result = GameSchema.safeParse({ players: players.value });
+    if (!validatePassword()) {
+      return;
+    }
+
+    const result = GameSchema.safeParse({
+      players: players.value,
+      password: password.value,
+    });
 
     if (!result.success) {
       errors.value = result.error.errors.map((e) => e.message);
@@ -57,7 +75,7 @@ const createGameHandler = async () => {
     isLoading.value = true;
     errors.value = [];
 
-    await GameService.createGame(result.data.players);
+    await GameService.createGame(result.data.players, result.data.password);
     gameCreated.value = true;
     setTimeout(() => {
       window.location.href = "/games";
@@ -99,6 +117,18 @@ const createGameHandler = async () => {
     </RetroCard>
 
     <div v-else>
+      <!-- Password Form -->
+      <RetroCard title="Contraseña de la Partida" class="bg-[#404040] mb-4">
+        <div class="space-y-4">
+          <RetroInput
+            v-model="password"
+            type="password"
+            placeholder="Contraseña de la partida"
+            :error="passwordError"
+          />
+        </div>
+      </RetroCard>
+
       <!-- Player Form -->
       <RetroCard title="Añadir Jugador" class="bg-[#404040]">
         <div class="space-y-4">
@@ -131,9 +161,10 @@ const createGameHandler = async () => {
       <!-- Create Game Button -->
       <RetroButton
         @click="createGameHandler"
-        :disabled="players.length < 2 || isLoading"
+        :disabled="players.length < 2 || isLoading || !password"
         :loading="isLoading"
         type="primary"
+        class="w-full mt-4"
       >
         <template #icon>
           <ArrowPathIcon v-if="isLoading" class="w-4 h-4 animate-spin" />

@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import type { Game } from "../services/supabase";
 import CleanupButton from "./CleanupButton.vue";
+import { ChevronRightIcon } from "@heroicons/vue/24/outline";
 
 const games = ref<Game[]>([]);
 
@@ -27,7 +28,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="flex justify-end mb-4">
-      <CleanupButton @cleanup-complete="fetchGames" />
+      <CleanupButton v-if="games.length > 0" @cleanup-complete="fetchGames" />
     </div>
     <div class="grid gap-4">
       <div v-for="game in games" :key="game.id">
@@ -42,22 +43,15 @@ onMounted(() => {
                 Created: {{ formatDate(game.created_at) }}
               </p>
             </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ChevronRightIcon class="h-6 w-6 text-gray-400" />
           </div>
         </a>
+      </div>
+      <div
+        v-if="games.length === 0"
+        class="flex justify-center items-center bg-white rounded-lg shadow-md p-5"
+      >
+        <p class="text-gray-600">No games found</p>
       </div>
     </div>
   </div>

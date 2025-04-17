@@ -14,6 +14,7 @@ export interface Game {
   id: string;
   name: string;
   created_at: string;
+  password: string;
   players: Player[];
 }
 

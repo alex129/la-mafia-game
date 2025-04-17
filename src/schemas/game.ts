@@ -7,6 +7,7 @@ export const PlayerSchema = z.object({
 
 export const GameSchema = z.object({
   players: z.array(PlayerSchema).min(2, "Se necesitan al menos 2 jugadores"),
+  password: z.string().min(4, "La contraseña debe tener al menos 4 caracteres"),
 });
 
 export type Player = z.infer<typeof PlayerSchema>;

@@ -1,5 +1,7 @@
 import { type GameAssignment, GameSchema, type Player } from "../schemas/game";
 import { createGame } from "./api";
+import bcrypt from "bcryptjs";
+
 export class GameService {
   static async generateAction(): Promise<string> {
     try {
@@ -22,8 +24,11 @@ export class GameService {
     }
   }
 
-  public static async createGame(players: Player[]): Promise<GameAssignment[]> {
-    const result = GameSchema.safeParse({ players });
+  public static async createGame(
+    players: Player[],
+    password: string
+  ): Promise<GameAssignment[]> {
+    const result = GameSchema.safeParse({ players, password });
 
     if (!result.success) {
       throw new Error(result.error.errors.map((e) => e.message).join(", "));
@@ -55,14 +60,24 @@ export class GameService {
       });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await createGame(
       assignments.map((assignment) => ({
         name: assignment.player.name,
         action: assignment.action,
         target: assignment.target.name,
-      }))
+      })),
+      hashedPassword
     );
 
     return assignments;
+  }
+
+  public static async verifyPassword(
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassword);
   }
 }

@@ -38,11 +38,11 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { players } = await request.json();
+    const { players, password } = await request.json();
 
     const { data: game, error: gameError } = await supabase
       .from("games")
-      .insert({})
+      .insert({ password })
       .select()
       .single();
 
