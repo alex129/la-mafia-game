@@ -5,14 +5,18 @@ import CleanupButton from "./CleanupButton.vue";
 import { ChevronRightIcon } from "@heroicons/vue/24/outline";
 
 const games = ref<Game[]>([]);
+const isLoading = ref(true);
 
 async function fetchGames() {
+  isLoading.value = true;
   try {
     const response = await fetch("/api/games");
     const data = await response.json();
     games.value = data.games;
   } catch (error) {
     console.error("Error fetching games:", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -26,7 +30,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="isLoading">
+    <div
+      class="flex justify-center items-center bg-white rounded-lg shadow-md p-5"
+    >
+      <img
+        src="/candy-bag.gif"
+        alt="candy la mafia loading"
+        class="w-12 h-12"
+      />
+    </div>
+  </div>
+  <div v-else>
     <div class="flex justify-end mb-4">
       <CleanupButton v-if="games.length > 0" @cleanup-complete="fetchGames" />
     </div>
