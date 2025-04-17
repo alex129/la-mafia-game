@@ -119,7 +119,7 @@ const createGameHandler = async () => {
       <img
         src="/game-over.png"
         alt="La Mafia Game"
-        class="w-8 h-8 bg-transparent"
+        class="w-8 h-8 bg-transparent animate-bounce"
       />
       <span>La Mafia Game</span>
     </h2>
