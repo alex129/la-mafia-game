@@ -63,7 +63,7 @@ onMounted(() => {
         >
           <div class="flex justify-between items-center">
             <div>
-              <h2 class="text-xl font-semibold">{{ game.name }}</h2>
+              <h2 class="text-xl font-semibold">{{ game.id }}</h2>
               <p class="text-gray-600">
                 Created: {{ formatDate(game.created_at) }}
               </p>

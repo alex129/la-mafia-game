@@ -1,7 +1,7 @@
 import { type GameAssignment, GameSchema, type Player } from "../schemas/game";
 import { createGame } from "./api";
 export class GameService {
-  private static async generateAction(): Promise<string> {
+  static async generateAction(): Promise<string> {
     try {
       const response = await fetch("/api/generate-action", {
         method: "POST",

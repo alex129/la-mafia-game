@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
+import { config } from "../config";
 
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = config.SUPABASE_URL;
+const supabaseKey = config.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase environment variables");
@@ -22,4 +23,5 @@ export interface Player {
   target: string;
   action: string;
   game_id: string;
+  regenerate_action_times?: number;
 }
