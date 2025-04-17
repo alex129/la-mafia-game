@@ -27,7 +27,7 @@ function formatDate(dateString: string) {
 onMounted(() => {
   setTimeout(() => {
     fetchGames();
-  }, 1000);
+  }, 500);
 });
 </script>
 
