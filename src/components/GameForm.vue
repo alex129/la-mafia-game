@@ -159,6 +159,7 @@ const createGameHandler = async () => {
             v-model="newPlayer.name"
             placeholder="Nombre del jugador"
             :error="nameError"
+            @keyup.enter="addPlayer"
           />
           <RetroButton @click="addPlayer" type="secondary">
             <template #icon>
