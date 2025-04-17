@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import type { Game } from "../services/supabase";
 import CleanupButton from "./CleanupButton.vue";
-import { ChevronRightIcon } from "@heroicons/vue/24/outline";
+import { ChevronRightIcon, PlusIcon } from "@heroicons/vue/24/outline";
 
 const games = ref<Game[]>([]);
 const isLoading = ref(true);
@@ -44,29 +44,43 @@ onMounted(() => {
     </div>
   </div>
   <div v-else>
-    <div class="flex justify-end mb-4">
+    <div
+      class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4"
+    >
+      <a
+        href="/"
+        class="w-auto inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        <PlusIcon class="h-5 w-5 mr-2" />
+        New Game
+      </a>
       <CleanupButton v-if="games.length > 0" @cleanup-complete="fetchGames" />
     </div>
     <div class="grid gap-4">
       <div v-for="game in games" :key="game.id">
         <a
           :href="`/games/${game.id}`"
-          class="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+          class="block p-4 sm:p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <div class="flex justify-between items-center">
-            <div class="flex flex-col gap-2">
-              <h2 class="text-xl font-semibold">{{ game.id }}</h2>
-              <p class="text-gray-600">
-                Created: {{ formatDate(game.created_at) }} at {{ new Date(game.created_at).toLocaleTimeString() }}
+            <div class="flex flex-col gap-1 sm:gap-2">
+              <h2 class="text-lg sm:text-xl font-semibold break-all">
+                {{ game.id }}
+              </h2>
+              <p class="text-sm sm:text-base text-gray-600">
+                Created: {{ formatDate(game.created_at) }} at
+                {{ new Date(game.created_at).toLocaleTimeString() }}
               </p>
             </div>
-            <ChevronRightIcon class="h-6 w-6 text-gray-400" />
+            <ChevronRightIcon
+              class="h-5 w-5 sm:h-6 sm:w-6 text-gray-400 flex-shrink-0"
+            />
           </div>
         </a>
       </div>
       <div
         v-if="games.length === 0"
-        class="flex justify-center items-center bg-white rounded-lg shadow-md p-5"
+        class="flex justify-center items-center bg-white rounded-lg shadow-md p-4 sm:p-5"
       >
         <p class="text-gray-600">No games found</p>
       </div>
