@@ -148,6 +148,7 @@ const createGameHandler = async () => {
             type="password"
             placeholder="Contraseña de la partida"
             :error="passwordError"
+            autocomplete="off"
           />
         </div>
       </RetroCard>
