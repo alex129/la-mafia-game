@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import type { Game } from "../services/supabase";
-import { cleanupGames } from "../services/api";
+import CleanupButton from "./CleanupButton.vue";
 
 const games = ref<Game[]>([]);
 
@@ -19,27 +19,6 @@ function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString();
 }
 
-async function confirmCleanup() {
-  if (
-    confirm(
-      "Are you sure you want to delete all games and players? This action cannot be undone."
-    )
-  ) {
-    try {
-      const success = await cleanupGames();
-      if (success) {
-        alert("All games and players have been deleted.");
-        await fetchGames(); // Refresh the list
-      } else {
-        alert("Error cleaning up games. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error cleaning up games. Please try again.");
-    }
-  }
-}
-
 onMounted(() => {
   fetchGames();
 });
@@ -48,12 +27,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="flex justify-end mb-4">
-      <button
-        @click="confirmCleanup"
-        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors cursor-pointer"
-      >
-        Clean Up All Games
-      </button>
+      <CleanupButton @cleanup-complete="fetchGames" />
     </div>
     <div class="grid gap-4">
       <div v-for="game in games" :key="game.id">
