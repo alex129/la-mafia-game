@@ -40,15 +40,14 @@ export class GameService {
 
     const assignments: GameAssignment[] = [];
 
+    let availablePlayers = [...players];
     for (const player of players) {
-      const availableTargets = [
-        ...players.filter((p) => p.name !== player.name),
-      ];
+      const availableTargets = availablePlayers.filter((p) => p.name !== player.name);
 
       const targetIndex = Math.floor(Math.random() * availableTargets.length);
       const target = availableTargets[targetIndex];
 
-      availableTargets.splice(targetIndex, 1);
+      availablePlayers = availablePlayers.filter((p) => p.name !== target.name);
 
       const action = await this.generateAction();
 
