@@ -45,7 +45,7 @@ async function handlePasswordVerification(password: string) {
 
     <PasswordVerificationForm
       v-if="!isVerified"
-      :onVerify="handlePasswordVerification"
+      @verify="handlePasswordVerification"
     />
 
     <template v-else>
@@ -54,6 +54,7 @@ async function handlePasswordVerification(password: string) {
           class="flex justify-center items-center bg-white rounded-lg shadow-md p-5"
         >
           <img
+            id="loading-icon"
             src="/candy-bag.gif"
             alt="candy la mafia loading"
             class="w-12 h-12"

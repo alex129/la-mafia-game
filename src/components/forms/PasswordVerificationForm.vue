@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const props = defineProps<{
-  onVerify: (password: string) => Promise<void>;
+const emit = defineEmits<{
+  verify: [password: string]
 }>();
 
 const password = ref("");
@@ -18,7 +18,7 @@ async function handleVerify() {
   try {
     isVerifying.value = true;
     error.value = "";
-    await props.onVerify(password.value);
+    emit('verify', password.value);
   } catch (err) {
     console.error("Error verifying password:", err);
     error.value = "Error al verificar la contraseña";
@@ -47,7 +47,7 @@ async function handleVerify() {
         >
           {{ isVerifying ? "Verificando..." : "Verificar Contraseña" }}
         </button>
-        <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
+        <p v-if="error" class="text-red-600 text-sm error-message">{{ error }}</p>
       </div>
     </div>
   </div>

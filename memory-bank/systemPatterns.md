@@ -122,3 +122,43 @@ graph TD
    - State validation
    - Action verification
    - Anti-cheating measures
+
+## Testing Patterns
+
+### Test Structure
+
+- Use `test` instead of `it` for test cases
+- Group related tests using `describe` blocks
+- Keep test descriptions clear and descriptive
+- Follow AAA pattern (Arrange, Act, Assert)
+
+### Mocking
+
+- Use Vitest's `vi.fn()` for function mocks
+- Type mocks using `ReturnType<typeof vi.fn>`
+- Use `vi.mock()` for module mocking
+- Clear mocks in `beforeEach` with `vi.clearAllMocks()`
+
+### Component Testing
+
+- Use Vue Test Utils for component mounting
+- Test component rendering, props, events, and slots
+- Mock external dependencies and API calls
+- Test error states and loading states
+- Verify component interactions and state changes
+
+### API Testing
+
+- Mock fetch calls using `vi.fn()`
+- Test success and error scenarios
+- Verify API parameters and responses
+- Test error handling and edge cases
+
+### Best Practices
+
+- Keep tests focused and atomic
+- Use meaningful test descriptions
+- Avoid test interdependencies
+- Clean up after tests (restore mocks, clear timers)
+- Test both success and failure paths
+- Use type-safe mocking
