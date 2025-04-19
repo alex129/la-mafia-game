@@ -39,7 +39,9 @@ async function regenerateAction() {
   try {
     isRegenerating.value = true;
     error.value = null;
-    const newAction = await GameService.generateAction();
+    const possibleActions = await GameService.generateActions(5);
+    const randomIndex = Math.floor(Math.random() * possibleActions.length);
+    const newAction = possibleActions[randomIndex];
     const response = await fetch(
       `/api/players/${props.playerId}/update-action`,
       {

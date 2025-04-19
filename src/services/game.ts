@@ -3,13 +3,14 @@ import { createGame } from "./api";
 import bcrypt from "bcryptjs";
 
 export class GameService {
-  static async generateAction(): Promise<string> {
+  static async generateActions(totalPlayers: number): Promise<string[]> {
     try {
-      const response = await fetch("/api/generate-action", {
+      const response = await fetch("/api/generate-actions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ totalPlayers }),
       });
 
       if (!response.ok) {
@@ -17,10 +18,10 @@ export class GameService {
       }
 
       const data = await response.json();
-      return data.action || "Cantar una canción de estopa";
+      return data.actions.split(",");
     } catch (error) {
       console.error("Error generating action:", error);
-      return "Cantar una canción de estopa";
+      return ["Cantar una canción de estopa"];
     }
   }
 
@@ -49,15 +50,20 @@ export class GameService {
 
       availablePlayers = availablePlayers.filter((p) => p.name !== target.name);
 
-      const action = await this.generateAction();
+      console.log(player, availablePlayers);
 
       assignments.push({
         player,
         target,
-        action,
+        action: '',
         mafia: [player],
       });
     }
+
+    const actions = await this.generateActions(players.length);
+    assignments.forEach((assignment, index) => {
+      assignment.action = actions[index];
+    });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

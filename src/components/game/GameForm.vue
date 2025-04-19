@@ -38,6 +38,14 @@ onUnmounted(() => {
 
 const validatePlayer = () => {
   const result = PlayerSchema.safeParse(newPlayer.value);
+  const nameAlreadyExists = players.value.some(
+    (player) => player.name === newPlayer.value.name
+  );
+
+  if (nameAlreadyExists) {
+    nameError.value = "El nombre ya existe";
+    return false;
+  }
 
   if (result.success) {
     nameError.value = "";
@@ -176,7 +184,7 @@ const createGameHandler = async () => {
         </ul>
       </RetroCard>
 
-      <RetroCard title="Jugadores" class="bg-[#404040]">
+      <RetroCard :title="`Jugadores (${players.length})`" class="bg-[#404040]">
         <PlayersList :players="players" @remove="removePlayer" />
       </RetroCard>
 
