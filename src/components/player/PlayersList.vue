@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserIcon, TrashIcon } from "@heroicons/vue/24/outline";
-import type { Player } from "../schemas/game";
+import type { Player } from "@/schemas/game";
 
 defineProps<{
   players: Player[];

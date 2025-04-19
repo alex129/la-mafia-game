@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { GameSchema, PlayerSchema, type Player } from "../schemas/game";
-import { GameService } from "../services/game";
+import { GameSchema, PlayerSchema, type Player } from "@/schemas/game";
+import { GameService } from "@/services/game";
 import { PlusIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
-import RetroButton from "./RetroButton.vue";
-import RetroInput from "./RetroInput.vue";
-import RetroCard from "./RetroCard.vue";
-import PlayersList from "./PlayersList.vue";
+import RetroButton from "@/components/ui/RetroButton.vue";
+import RetroInput from "@/components/ui/RetroInput.vue";
+import RetroCard from "@/components/ui/RetroCard.vue";
+import PlayersList from "@/components/player/PlayersList.vue";
 
 const players = ref<Player[]>([]);
 const newPlayer = ref<Player>({ name: "" });

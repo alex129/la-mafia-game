@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Player } from "../services/supabase";
+import type { Player } from "@/services/supabase";
 
 const props = defineProps<{
   player: Player;

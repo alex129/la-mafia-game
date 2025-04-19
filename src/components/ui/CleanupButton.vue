@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import ConfirmModal from "./ConfirmModal.vue";
-import { cleanupGames } from "../services/api";
+import ConfirmModal from "@/components/modals/ConfirmModal.vue";
+import { cleanupGames } from "@/services/api";
 
 const isModalOpen = ref(false);
 

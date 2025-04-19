@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import type { Player } from "../services/supabase";
+import type { Player } from "@services/supabase";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
-import { GameService } from "../services/game";
-import { config } from "../config";
+import { GameService } from "@services/game";
+import { config } from "@/config";
 
 const props = defineProps<{
   playerId: string;
