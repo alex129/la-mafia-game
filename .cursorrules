@@ -1,0 +1,142 @@
+# La Mafia Game - Cursor Rules
+
+## Project Patterns
+
+### Code Organization
+
+- Use Astro for page routing and layouts
+- Vue components for interactive elements
+- Keep components small and focused
+- Follow atomic design principles
+
+### Naming Conventions
+
+- Components: PascalCase (e.g., GameRoom.vue)
+- Files: kebab-case (e.g., game-room.astro)
+- Functions: camelCase (e.g., createGameRoom)
+- Constants: UPPER_SNAKE_CASE (e.g., GAME_PHASES)
+
+### File Structure
+
+- Pages in src/pages/
+- Components in src/components/
+- Layouts in src/layouts/
+- Types in src/types/
+- Utils in src/utils/
+
+### Component Patterns
+
+- Use Composition API
+- Keep state management simple
+- Prefer props over events
+- Document component props
+
+### State Management
+
+- Local state for component-specific data
+- Supabase for shared state
+- Real-time subscriptions for game state
+- Avoid complex state management libraries
+
+## Development Preferences
+
+### Code Style
+
+- Use TypeScript for type safety
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write meaningful comments
+
+### Testing
+
+- Unit tests for utilities
+- Component tests for UI
+- Integration tests for game flow
+- E2E tests for critical paths
+- Use vitest as testing engine and vue test utils to test vue3 components
+
+### Documentation
+
+- Keep README up to date
+- Document API endpoints
+- Comment complex logic
+- Update memory bank regularly
+
+### Git Workflow
+
+- Feature branches
+- Semantic versioning
+- Conventional commits
+- Pull request reviews
+
+## Project Intelligence
+
+### Critical Paths
+
+1. Authentication Flow
+
+   - Login/Register
+   - Session management
+   - Profile updates
+
+2. Game Flow
+
+   - Room creation
+   - Player joining
+   - Role assignment
+   - Game phases
+   - Voting system
+
+3. Real-time Updates
+   - Game state changes
+   - Player status
+   - Chat messages
+   - Voting results
+
+### Known Challenges
+
+1. Real-time Synchronization
+
+   - Handle disconnections
+   - Manage state conflicts
+   - Ensure consistency
+
+2. Game State Management
+
+   - Complex state transitions
+   - Role-based permissions
+   - Action validation
+
+3. User Experience
+   - Mobile responsiveness
+   - Performance optimization
+   - Accessibility
+
+### Tool Usage
+
+- VS Code for development
+- Chrome DevTools for debugging
+- Postman for API testing
+- Vercel for deployment
+
+## Evolution Tracking
+
+### Technical Decisions
+
+- Astro for static generation
+- Vue.js for interactivity
+- Supabase for backend
+- TailwindCSS for styling
+
+### Architecture Changes
+
+- Initial: Basic Astro setup
+- Current: Adding Vue components
+- Planned: Supabase integration
+
+### Performance Considerations
+
+- Lazy loading components
+- Optimizing images
+- Minimizing bundle size
+- Caching strategies
