@@ -5,14 +5,16 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const { totalPlayers } = await request.json();
 
+    const totalActions = Math.max(totalPlayers, 20);
+
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       temperature: 0.65,
       top_p: 0.92,
       presence_penalty: 1.1,
       frequency_penalty: 0.7,
-      max_tokens: 25 * totalPlayers,
-      n: totalPlayers,
+      max_tokens: 25 * totalActions,
+      n: totalActions,
       messages: [
         {
           role: "system",
@@ -47,7 +49,7 @@ Debe requerir ≥ 5 minutos y surgir de un gatillo que el jugador pueda provoc
         },
         {
           role: "user",
-          content: `Genera ahora ${totalPlayers} acciones **distintas** que cumplan estos requisitos. Separa las acciones con una coma.`,
+          content: `Genera ahora ${totalActions} acciones **distintas** que cumplan estos requisitos. Separa las acciones con una coma.`,
         },
       ],
     });
