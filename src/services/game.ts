@@ -19,7 +19,7 @@ export class GameService {
 
       const data = await response.json();
       const actions = data.actions.split(",");
-      return actions.sort(() => Math.random() - 0.5);
+      return actions;
     } catch (error) {
       console.error("Error generating action:", error);
       return ["Cantar una canción de estopa"];
