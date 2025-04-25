@@ -8,7 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const totalActions = Math.max(totalPlayers, 10);
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       temperature: 0.65,
       top_p: 0.92,
       presence_penalty: 1.1,
@@ -45,7 +45,7 @@ Debe requerir ≥ 5 minutos y surgir de un gatillo que el jugador pueda provoc
 - Consigue que el objetivo haga una lista de la compra.
 
 ! important
-separa las acciones que generes con una coma
+separa las acciones que generes con una coma y siempre empieza la accion con 'Consigue que el objetivo {accion}''
 `,
         },
         {
