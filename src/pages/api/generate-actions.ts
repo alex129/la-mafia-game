@@ -5,7 +5,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const { totalPlayers } = await request.json();
 
-    const totalActions = Math.max(totalPlayers, 20);
+    const totalActions = Math.max(totalPlayers, 10);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -44,8 +44,9 @@ Debe requerir ≥ 5 minutos y surgir de un gatillo que el jugador pueda provoc
 - Consigue que el objetivo enseñe una coreografía de TikTok.
 - Consigue que el objetivo haga una lista de la compra.
 
-# Ejemplos NO VÁLIDOS
-- …(mantén tu lista actual)…`,
+! important
+separa las acciones que generes con una coma
+`,
         },
         {
           role: "user",
