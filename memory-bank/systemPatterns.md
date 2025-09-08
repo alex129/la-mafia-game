@@ -2,11 +2,14 @@
 
 ## Architecture Overview
 
-The application follows a modern web application architecture with:
+The application follows Clean Architecture and Domain-Driven Design patterns with:
 
 - Frontend: Astro + Vue.js components
-- Backend: Supabase (PostgreSQL + Real-time subscriptions)
-- Authentication: Supabase Auth
+- Backend: Clean Architecture with DDD
+  - Domain Layer: Entities, Value Objects, Contracts
+  - Application Layer: Use Cases and Business Logic
+  - Infrastructure Layer: Prisma Repositories, Database
+- Database: PostgreSQL with Prisma ORM
 - Deployment: Vercel
 
 ## Key Technical Decisions
@@ -51,23 +54,29 @@ The application follows a modern web application architecture with:
 
 ### Backend Patterns
 
-1. Data Model
+1. Clean Architecture Layers
 
-   - Users table
-   - Games table
-   - Game states table
-   - Roles table
+   - Domain: Game, Player entities with business logic
+   - Application: Use cases (CreateGame, FindPlayerById, etc.)
+   - Infrastructure: Prisma repositories, database access
 
-2. Real-time Updates
+2. Domain-Driven Design
 
-   - Supabase subscriptions
-   - Game state broadcasting
-   - Player status updates
+   - Aggregates: Game contains Players
+   - Repositories: Abstract interfaces in domain
+   - Domain Events: For future event-driven features
 
-3. Security
-   - Row Level Security
-   - Authentication middleware
-   - Role-based access control
+3. Use Cases
+
+   - CreateGame, FindGameById, FindAllGames
+   - FindPlayerById, UpdatePlayerAction
+   - VerifyGamePassword, CleanupOldGames
+
+4. Data Access
+
+   - Repository pattern with Prisma ORM
+   - Database transactions for consistency
+   - Error handling with domain exceptions
 
 ## Component Relationships
 

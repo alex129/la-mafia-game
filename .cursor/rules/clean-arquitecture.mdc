@@ -1,0 +1,1217 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Architectural Documentation - Monorepo DDD Pattern
+
+## 📖 Overview
+
+This document describes the architectural patterns and folder structure for a TypeScript monorepo implementing Domain-Driven Design (DDD) with hexagonal architecture. These patterns are designed to be reusable across different projects and provide clear separation of concerns, testability, and maintainability.
+
+## 🏗️ Project Structure
+
+### Core DDD Architecture (Non-Monorepo)
+
+```
+project-root/
+├── src/
+│   ├── domain/            # Domain logic, entities, contracts, and business rules
+│   │   ├── {entity}/
+│   │   │   ├── {Entity}.ts
+│   │   │   ├── contracts/
+│   │   │   ├── errors/
+│   │   │   └── events/
+│   │   └── shared/        # Shared domain utilities
+│   ├── application/       # Use cases, application services, and orchestration
+│   │   ├── {entity}/
+│   │   │   ├── Create{Entity}.ts
+│   │   │   ├── Find{Entity}ById.ts
+│   │   │   └── events/
+│   │   └── shared/        # Shared application services
+│   └── infrastructure/    # External concerns, repositories, APIs, databases
+│       ├── api/           # HTTP handlers and controllers
+│       ├── repositories/  # Data persistence implementations
+│       ├── services/      # External service integrations
+│       ├── di/            # Dependency injection container
+│       └── events/        # Event processing infrastructure
+└── tests/                 # Test structure mirrors src/
+    ├── domain/
+    │   └── {entity}/
+    │       ├── {Entity}.test.ts
+    │       ├── {Entity}Mother.ts
+    │       └── {Entity}RepositoryMock.ts
+    ├── application/
+    │   └── {entity}/
+    │       ├── Create{Entity}.test.ts
+    │       └── Find{Entity}ById.test.ts
+    └── infrastructure/
+        ├── repositories/
+        ├── api/
+        └── integration/
+```
+
+### Monorepo Variation
+
+For larger projects, you might organize this within packages:
+
+```
+project-root/
+├── packages/
+│   ├── frontend/          # Frontend application
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   └── services/
+│   │   └── tests/
+│   │       ├── components/
+│   │       └── integration/
+│   ├── backend/           # Backend application (application + infrastructure)
+│   │   ├── src/
+│   │   │   ├── application/
+│   │   │   │   ├── {entity}/
+│   │   │   │   │   ├── Create{Entity}.ts
+│   │   │   │   │   └── Find{Entity}ById.ts
+│   │   │   │   └── shared/
+│   │   │   └── infrastructure/
+│   │   │       ├── api/
+│   │   │       ├── repositories/
+│   │   │       ├── services/
+│   │   │       └── di/
+│   │   └── tests/         # Tests mirror src/ structure
+│   │       ├── application/
+│   │       │   └── {entity}/
+│   │       └── infrastructure/
+│   │           ├── repositories/
+│   │           └── api/
+│   ├── shared/            # Domain logic only
+│   │   ├── src/
+│   │   │   └── domain/
+│   │   │       ├── {entity}/
+│   │   │       │   ├── {Entity}.ts
+│   │   │       │   ├── contracts/
+│   │   │       │   ├── errors/
+│   │   │       │   └── events/
+│   │   │       └── shared/
+│   │   └── tests/         # Tests mirror src/ structure
+│   │       └── domain/
+│   │           └── {entity}/
+│   │               ├── {Entity}.test.ts
+│   │               ├── {Entity}Mother.ts
+│   │               └── {Entity}RepositoryMock.ts
+│   └── scripts/           # Utility scripts
+├── docs/                  # Project documentation
+└── tests/                 # E2E and integration tests across packages
+```
+
+---
+
+## 📦 Domain Layer (`src/domain/` or `shared/src/domain/`)
+
+The domain layer contains all business logic, entities, contracts, and domain rules that form the core of your application.
+
+### Domain Structure
+
+Each domain object follows this consistent structure:
+
+```
+src/domain/                            # Non-monorepo
+# OR packages/shared/src/domain/        # Monorepo
+├── {entity}/
+│   ├── {Entity}.ts                    # Main domain entity
+│   ├── contracts/
+│   │   ├── {Entity}Contract.ts        # Type contracts
+│   │   ├── {Entity}Repository.ts      # Repository interface
+│   │   └── Create{Entity}Contract.ts  # Operation-specific contracts
+│   ├── errors/
+│   │   ├── {Entity}NotFound.ts        # Domain-specific errors
+│   │   └── Invalid{Entity}Error.ts    # Validation errors
+│   ├── events/                        # Domain events (optional)
+│   │   └── {Entity}Created.ts
+│   └── {ValueObject}.ts               # Value objects and enums
+└── shared/                            # Shared domain utilities
+    ├── Serializable.ts
+    ├── AppError.ts
+    ├── Uuid.ts
+    └── events/
+        └── DomainEvent.ts
+```
+
+### Example: User Domain Object
+
+```typescript
+// src/domain/user/User.ts (Non-monorepo)
+// OR packages/shared/src/domain/user/User.ts (Monorepo)
+import { Serializable } from "../shared/Serializable";
+import Uuid from "../shared/Uuid";
+import { UserContract, CreateUserContract } from "./contracts/UserContract";
+
+export class User extends Serializable {
+  private readonly id_value: Uuid;
+  public email: string;
+  public name: string;
+  public lastname: string;
+  public role: AuthRole;
+  public created_at: Date;
+
+  constructor({
+    id,
+    email,
+    name,
+    lastname,
+    role,
+    created_at,
+  }: {
+    id?: string;
+    email: string;
+    name: string;
+    lastname: string;
+    role: AuthRole;
+    created_at?: Date;
+  }) {
+    super();
+    this.id_value = new Uuid(id);
+    this.email = email;
+    this.name = name;
+    this.lastname = lastname;
+    this.role = role;
+    this.created_at = created_at ?? new Date();
+  }
+
+  // Factory method for creation
+  static create({ email, name, lastname, role }: CreateUserContract): User {
+    return new User({
+      email,
+      name,
+      lastname,
+      role: role || AuthRole.USER,
+    });
+  }
+
+  // Factory method from primitives (database/API)
+  static fromPrimitives(primitives: UserContract): User {
+    return new User({
+      id: primitives.id,
+      email: primitives.email,
+      name: primitives.name,
+      lastname: primitives.lastname,
+      role: primitives.role,
+      created_at: primitives.created_at,
+    });
+  }
+
+  // Getters
+  get id(): string {
+    return this.id_value.getValue();
+  }
+
+  get fullName(): string {
+    return `${this.name} ${this.lastname}`;
+  }
+
+  // Business logic methods
+  isAdmin(): boolean {
+    return this.role === AuthRole.ADMIN;
+  }
+
+  hasRole(role: AuthRole): boolean {
+    return this.role === role;
+  }
+
+  // Serialization
+  toPrimitives(): UserContract {
+    return {
+      id: this.id,
+      email: this.email,
+      name: this.name,
+      lastname: this.lastname,
+      role: this.role,
+      created_at: this.created_at,
+    };
+  }
+}
+```
+
+### Contracts Structure
+
+```typescript
+// src/domain/user/contracts/UserContract.ts (Non-monorepo)
+// OR packages/shared/src/domain/user/contracts/UserContract.ts (Monorepo)
+import { AuthRole } from "../AuthRole";
+
+export interface UserContract {
+  id: string;
+  email: string;
+  name: string;
+  lastname: string;
+  role: AuthRole;
+  created_at: Date;
+}
+
+export type CreateUserContract = Partial<UserContract> &
+  Required<Pick<UserContract, "email" | "name" | "lastname">>;
+
+export type UpdateUserContract = Partial<UserContract> &
+  Required<Pick<UserContract, "name" | "lastname">>;
+```
+
+```typescript
+// src/domain/user/contracts/UserRepository.ts (Non-monorepo)
+// OR packages/shared/src/domain/user/contracts/UserRepository.ts (Monorepo)
+import { User } from "../User";
+
+export interface UserRepository {
+  save(user: User): Promise<void>;
+  findById(id: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>;
+  findByIds(ids: string[]): Promise<User[]>;
+  delete(id: string): Promise<void>;
+}
+```
+
+### Error Structure
+
+```typescript
+// src/domain/user/errors/UserNotFound.ts (Non-monorepo)
+// OR packages/shared/src/domain/user/errors/UserNotFound.ts (Monorepo)
+import { AppError } from "../../shared/AppError";
+
+export class UserNotFound extends AppError {
+  constructor(userId?: string) {
+    super({
+      message: userId ? `User with ID ${userId} not found` : "User not found",
+      httpCode: 404,
+      name: "UserNotFound",
+    });
+  }
+}
+```
+
+### Shared Base Classes
+
+```typescript
+// src/domain/shared/Serializable.ts (Non-monorepo)
+// OR packages/shared/src/domain/shared/Serializable.ts (Monorepo)
+export abstract class Serializable {
+  abstract toPrimitives(): Record<string, any>;
+}
+
+// src/domain/shared/AppError.ts (Non-monorepo)
+// OR packages/shared/src/domain/shared/AppError.ts (Monorepo)
+export abstract class AppError extends Error {
+  public readonly httpCode: number;
+  public readonly name: string;
+
+  constructor({
+    message,
+    httpCode,
+    name,
+  }: {
+    message: string;
+    httpCode: number;
+    name: string;
+  }) {
+    super(message);
+    this.httpCode = httpCode;
+    this.name = name;
+  }
+}
+
+// src/domain/shared/Uuid.ts (Non-monorepo)
+// OR packages/shared/src/domain/shared/Uuid.ts (Monorepo)
+export default class Uuid {
+  private readonly value: string;
+
+  constructor(value?: string) {
+    this.value = value || crypto.randomUUID();
+  }
+
+  getValue(): string {
+    return this.value;
+  }
+}
+```
+
+---
+
+## 📦 Application Layer (`src/application/` or `backend/src/application/`)
+
+### Application Layer Structure
+
+Contains use cases and business logic orchestration:
+
+```
+src/application/                         # Non-monorepo
+# OR packages/backend/src/application/    # Monorepo
+├── {entity}/
+│   ├── Create{Entity}.ts           # Creation use cases
+│   ├── Find{Entity}ById.ts         # Query use cases
+│   ├── List{Entity}s.ts            # List use cases
+│   ├── Update{Entity}.ts           # Update use cases
+│   ├── Delete{Entity}.ts           # Delete use cases
+│   ├── events/                     # Domain event subscribers
+│   │   └── Send{Action}On{Event}.ts
+│   └── notifications/              # Notification handlers
+│       └── Send{Entity}Notification.ts
+└── shared/                         # Shared application services
+    ├── EventBusService.ts
+    └── interfaces/
+```
+
+### Use Case Implementation
+
+```typescript
+// src/application/user/FindUserById.ts (Non-monorepo)
+// OR packages/backend/src/application/user/FindUserById.ts (Monorepo)
+import { UserRepository } from "../../domain/user/contracts/UserRepository"; // Non-monorepo
+// import { UserRepository } from '@shared/domain/user/contracts/UserRepository'; // Monorepo
+import { User } from "../../domain/user/User"; // Non-monorepo
+// import { User } from '@shared/domain/user/User'; // Monorepo
+import { UserNotFound } from "../../domain/user/errors/UserNotFound"; // Non-monorepo
+// import { UserNotFound } from '@shared/domain/user/errors/UserNotFound'; // Monorepo
+
+export class FindUserById {
+  constructor(private userRepository: UserRepository) {}
+
+  async execute(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new UserNotFound(userId);
+    }
+
+    return user;
+  }
+}
+```
+
+```typescript
+// src/application/user/CreateUser.ts (Non-monorepo)
+// OR packages/backend/src/application/user/CreateUser.ts (Monorepo)
+import { UserRepository } from "../../domain/user/contracts/UserRepository"; // Non-monorepo
+// import { UserRepository } from '@shared/domain/user/contracts/UserRepository'; // Monorepo
+import { User } from "../../domain/user/User"; // Non-monorepo
+// import { User } from '@shared/domain/user/User'; // Monorepo
+import { CreateUserContract } from "../../domain/user/contracts/UserContract"; // Non-monorepo
+// import { CreateUserContract } from '@shared/domain/user/contracts/UserContract'; // Monorepo
+import { EventBusService } from "../shared/EventBusService";
+import { UserCreated } from "../../domain/user/events/UserCreated"; // Non-monorepo
+// import { UserCreated } from '@shared/domain/user/events/UserCreated'; // Monorepo
+
+export class CreateUser {
+  constructor(
+    private userRepository: UserRepository,
+    private eventBusService: EventBusService
+  ) {}
+
+  async execute(userData: CreateUserContract): Promise<User> {
+    const user = User.create(userData);
+
+    await this.userRepository.save(user);
+
+    // Publish domain event
+    await this.eventBusService.publishEvent(
+      new UserCreated({ user: user.toPrimitives() })
+    );
+
+    return user;
+  }
+}
+```
+
+## 📦 Infrastructure Layer (`src/infrastructure/` or `backend/src/infrastructure/`)
+
+### Infrastructure Layer Structure
+
+```
+src/infrastructure/                      # Non-monorepo
+# OR packages/backend/src/infrastructure/ # Monorepo
+├── api/                            # HTTP handlers
+│   ├── backoffice/                 # Admin/Editor endpoints
+│   │   └── {entity}/
+│   │       ├── post.ts             # Create
+│   │       ├── get.ts              # Read one
+│   │       ├── list.ts             # Read many
+│   │       ├── put.ts              # Update
+│   │       └── delete.ts           # Delete
+│   ├── public/                     # Public endpoints
+│   │   └── {entity}/
+│   │       ├── get.ts
+│   │       └── list.ts
+│   └── shared/                     # Shared handlers
+│       └── {entity}/
+│           └── operation.ts
+├── repositories/                   # Data persistence
+│   ├── cache/                      # Cache repositories
+│   │   └── Cache{Entity}Repository.ts
+│   └── Drizzle{Entity}Repository.ts
+├── services/                       # External services
+│   ├── S3StorageService.ts
+│   ├── EmailService.ts
+│   ├── EventBridgeService.ts
+│   └── RedisClient.ts
+├── di/                            # Dependency Injection
+│   ├── DIContainer.ts
+│   ├── ContainerNames.ts
+│   └── containers/
+│       ├── InfrastructureContainer.ts
+│       └── UseCaseContainer.ts
+├── events/                        # Event processing
+│   └── domain-events-subscriber.ts
+└── db/                            # Database configuration
+    ├── schema/
+    └── migrations/
+```
+
+### Repository Implementation
+
+```typescript
+// src/infrastructure/repositories/DrizzleUserRepository.ts (Non-monorepo)
+// OR packages/backend/src/infrastructure/repositories/DrizzleUserRepository.ts (Monorepo)
+import { db } from "../db";
+import { users } from "../db/schema";
+import { UserRepository } from "../../domain/user/contracts/UserRepository"; // Non-monorepo
+// import { UserRepository } from '@shared/domain/user/contracts/UserRepository'; // Monorepo
+import { User } from "../../domain/user/User"; // Non-monorepo
+// import { User } from '@shared/domain/user/User'; // Monorepo
+import { DatabaseError } from "../../domain/shared/errors/DatabaseError"; // Non-monorepo
+// import { DatabaseError } from '@shared/domain/shared/errors/DatabaseError'; // Monorepo
+import { eq, inArray } from "drizzle-orm";
+
+export class DrizzleUserRepository implements UserRepository {
+  async save(user: User): Promise<void> {
+    try {
+      const data = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        lastname: user.lastname,
+        role: user.role,
+        created_at: user.created_at,
+      };
+
+      await db
+        .insert(users)
+        .values(data)
+        .onConflictDoUpdate({
+          target: [users.id],
+          set: {
+            name: user.name,
+            lastname: user.lastname,
+            role: user.role,
+          },
+        });
+    } catch (error) {
+      throw new DatabaseError(
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
+  }
+
+  async findById(id: string): Promise<User | null> {
+    try {
+      const userDb = await db.query.users.findFirst({
+        where: eq(users.id, id),
+      });
+
+      if (!userDb) {
+        return null;
+      }
+
+      return new User({
+        id: userDb.id,
+        email: userDb.email,
+        name: userDb.name,
+        lastname: userDb.lastname,
+        role: userDb.role,
+        created_at: userDb.created_at,
+      });
+    } catch (error) {
+      throw new DatabaseError(
+        error instanceof Error ? error.message : "Error finding user"
+      );
+    }
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    try {
+      const userDb = await db.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+
+      if (!userDb) {
+        return null;
+      }
+
+      return User.fromPrimitives(userDb);
+    } catch (error) {
+      throw new DatabaseError(
+        error instanceof Error ? error.message : "Error finding user by email"
+      );
+    }
+  }
+
+  async findByIds(ids: string[]): Promise<User[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    try {
+      const usersDb = await db.query.users.findMany({
+        where: inArray(users.id, ids),
+      });
+
+      return usersDb.map((userDb) => User.fromPrimitives(userDb));
+    } catch (error) {
+      throw new DatabaseError(
+        error instanceof Error ? error.message : "Error finding users by IDs"
+      );
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await db.delete(users).where(eq(users.id, id));
+    } catch (error) {
+      throw new DatabaseError(
+        error instanceof Error ? error.message : "Error deleting user"
+      );
+    }
+  }
+}
+```
+
+### API Handler Implementation
+
+```typescript
+// src/infrastructure/api/backoffice/user/post.ts (Non-monorepo)
+// OR packages/backend/src/infrastructure/api/backoffice/user/post.ts (Monorepo)
+import { APIGatewayProxyHandler } from "aws-lambda";
+import { CreateUser } from "../../../application/user/CreateUser";
+import { DIContainer } from "../../di/DIContainer";
+import { ContainerNames } from "../../di/ContainerNames";
+import { ResponseHandler } from "../../http/handlers/ResponseHandler";
+import { CreateUserRequestSchema } from "../../../../domain/schemas/user/CreateUserRequestSchema"; // Non-monorepo
+// import { CreateUserRequestSchema } from '@shared/domain/schemas/user/CreateUserRequestSchema'; // Monorepo
+
+const container = DIContainer.getInstance();
+
+// Get dependencies via DI
+const userRepository = container.getByName<UserRepository>(
+  ContainerNames.USER_REPOSITORY
+);
+const eventBusService = container.getByName<EventBusService>(
+  ContainerNames.EVENT_BUS_SERVICE
+);
+
+// Instantiate use case
+const createUser = new CreateUser(userRepository, eventBusService);
+
+export const handler: APIGatewayProxyHandler = async (event) => {
+  try {
+    const body = JSON.parse(event.body || "{}");
+    const userData = CreateUserRequestSchema.parse(body);
+
+    const user = await createUser.execute(userData);
+
+    return ResponseHandler.success(
+      user.toPrimitives(),
+      "User created successfully"
+    );
+  } catch (error) {
+    return ResponseHandler.error(error);
+  }
+};
+```
+
+### Dependency Injection Container
+
+```typescript
+// src/infrastructure/di/DIContainer.ts (Non-monorepo)
+// OR packages/backend/src/infrastructure/di/DIContainer.ts (Monorepo)
+export class DIContainer {
+  private static instance: DIContainer;
+  private readonly dependencies = new Map<string, any>();
+  private readonly metadata = new Map<string, DependencyMetadata>();
+  private dependenciesRegistered = false;
+
+  static getInstance(): DIContainer {
+    if (!DIContainer.instance) {
+      DIContainer.instance = new DIContainer();
+    }
+    return DIContainer.instance;
+  }
+
+  register<T>(
+    classConstructor: Constructor<T>,
+    dependencies: Constructor[] | string[] = []
+  ): void {
+    const name = classConstructor.name;
+    this.metadata.set(name, {
+      constructor: classConstructor,
+      dependencies,
+    });
+  }
+
+  registerByName<T>(
+    name: string,
+    classConstructor: Constructor<T>,
+    dependencies: Constructor[] | string[] = []
+  ): void {
+    this.metadata.set(name, {
+      constructor: classConstructor,
+      dependencies,
+    });
+  }
+
+  get<T>(classConstructor: Constructor<T>): T {
+    this.ensureDependenciesRegistered();
+    return this.resolve(classConstructor.name);
+  }
+
+  getByName<T>(name: string): T {
+    this.ensureDependenciesRegistered();
+    return this.resolve(name);
+  }
+
+  private ensureDependenciesRegistered(): void {
+    if (this.dependenciesRegistered) return;
+
+    new InfrastructureContainer().register(this);
+    new UseCaseContainer().register(this);
+
+    this.dependenciesRegistered = true;
+  }
+
+  private resolve<T>(name: string): T {
+    if (this.dependencies.has(name)) {
+      return this.dependencies.get(name);
+    }
+
+    const metadata = this.metadata.get(name);
+    if (!metadata) {
+      throw new Error(`Dependency '${name}' not found`);
+    }
+
+    const resolvedDependencies = metadata.dependencies.map((dep) =>
+      typeof dep === "string" ? this.resolve(dep) : this.resolve(dep.name)
+    );
+
+    const instance = new metadata.constructor(...resolvedDependencies);
+    this.dependencies.set(name, instance); // Singleton cache
+
+    return instance;
+  }
+}
+```
+
+```typescript
+// src/infrastructure/di/containers/InfrastructureContainer.ts (Non-monorepo)
+// OR packages/backend/src/infrastructure/di/containers/InfrastructureContainer.ts (Monorepo)
+import { DependencyContainer } from "../DependencyContainer";
+import { DIContainer } from "../DIContainer";
+import { ContainerNames } from "../ContainerNames";
+
+export class InfrastructureContainer extends DependencyContainer {
+  register(container: DIContainer): void {
+    // Services
+    container.registerByName(ContainerNames.STORAGE_SERVICE, S3StorageService);
+    container.registerByName(ContainerNames.EMAIL_SERVICE, EmailService);
+    container.registerByName(
+      ContainerNames.EVENT_BUS_SERVICE,
+      EventBridgeService
+    );
+
+    // Repositories
+    container.registerByName(
+      ContainerNames.USER_REPOSITORY,
+      DrizzleUserRepository
+    );
+    container.registerByName(
+      ContainerNames.CACHE_USER_REPOSITORY,
+      CacheUserRepository,
+      [ContainerNames.USER_REPOSITORY]
+    );
+
+    // Cache repositories with decorator pattern
+    container.registerByName(
+      ContainerNames.CACHE_USER_REPOSITORY,
+      CacheUserRepository,
+      [ContainerNames.USER_REPOSITORY]
+    );
+  }
+}
+```
+
+---
+
+## 🧪 Testing Structure (`tests/`)
+
+### Object Mother Pattern
+
+```typescript
+// tests/domain/user/UserMother.ts (Non-monorepo)
+// OR packages/shared/tests/domain/user/UserMother.ts (Monorepo)
+import { User } from "../../../src/domain/user/User"; // Non-monorepo
+// import { User } from '../../../src/domain/user/User'; // Monorepo shared package
+import { AuthRole } from "../../../src/domain/auth/AuthRole"; // Non-monorepo
+// import { AuthRole } from '../../../src/domain/auth/AuthRole'; // Monorepo shared package
+import { randomUUID } from "crypto";
+
+export class UserMother {
+  static basic(): User {
+    return new User({
+      id: randomUUID(),
+      email: "test@example.com",
+      name: "Test",
+      lastname: "User",
+      role: AuthRole.USER,
+      created_at: new Date(),
+    });
+  }
+
+  static admin(): User {
+    return new User({
+      id: randomUUID(),
+      email: "admin@example.com",
+      name: "Admin",
+      lastname: "User",
+      role: AuthRole.ADMIN,
+      created_at: new Date(),
+    });
+  }
+
+  static withParameters({
+    id = randomUUID(),
+    email = "custom@example.com",
+    name = "Custom",
+    lastname = "User",
+    role = AuthRole.USER,
+    created_at = new Date(),
+  }: {
+    id?: string;
+    email?: string;
+    name?: string;
+    lastname?: string;
+    role?: AuthRole;
+    created_at?: Date;
+  } = {}): User {
+    return new User({
+      id,
+      email,
+      name,
+      lastname,
+      role,
+      created_at,
+    });
+  }
+}
+```
+
+### Repository Mock Pattern
+
+```typescript
+// tests/domain/user/UserRepositoryMock.ts (Non-monorepo)
+// OR packages/shared/tests/domain/user/UserRepositoryMock.ts (Monorepo)
+import { User } from "../../../src/domain/user/User"; // Non-monorepo
+// import { User } from '../../../src/domain/user/User'; // Monorepo shared package
+import { UserRepository } from "../../../src/domain/user/contracts/UserRepository"; // Non-monorepo
+// import { UserRepository } from '../../../src/domain/user/contracts/UserRepository'; // Monorepo shared package
+import { vi, expect } from "vitest";
+
+export class UserRepositoryMock implements UserRepository {
+  readonly saveMock = vi.fn();
+  readonly findByIdMock = vi.fn();
+  readonly findByEmailMock = vi.fn();
+  readonly findByIdsMock = vi.fn();
+  readonly deleteMock = vi.fn();
+
+  // Assert methods for testing
+  assertSaveCalledWith(user: User) {
+    expect(this.saveMock).toHaveBeenCalledWith(user);
+  }
+
+  assertFindByIdCalledWith(id: string) {
+    expect(this.findByIdMock).toHaveBeenCalledWith(id);
+  }
+
+  assertFindByEmailCalledWith(email: string) {
+    expect(this.findByEmailMock).toHaveBeenCalledWith(email);
+  }
+
+  assertDeleteCalledWith(id: string) {
+    expect(this.deleteMock).toHaveBeenCalledWith(id);
+  }
+
+  // Implementation methods
+  async save(user: User): Promise<void> {
+    this.saveMock(user);
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return this.findByIdMock(id);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.findByEmailMock(email);
+  }
+
+  async findByIds(ids: string[]): Promise<User[]> {
+    return this.findByIdsMock(ids);
+  }
+
+  async delete(id: string): Promise<void> {
+    this.deleteMock(id);
+  }
+}
+```
+
+### Use Case Testing Pattern
+
+```typescript
+// tests/application/user/CreateUser.test.ts (Non-monorepo)
+// OR packages/backend/tests/application/user/CreateUser.test.ts (Monorepo)
+import { describe, it, expect, beforeEach } from "vitest";
+import { CreateUser } from "../../../src/application/user/CreateUser"; // Non-monorepo
+// import { CreateUser } from '../../../src/application/user/CreateUser'; // Monorepo backend package
+import { UserRepositoryMock } from "../../domain/user/UserRepositoryMock"; // From tests/
+// import { UserRepositoryMock } from '@shared/tests/domain/user/UserRepositoryMock'; // Monorepo
+import { EventBusServiceMock } from "../../infrastructure/services/EventBusServiceMock";
+import { UserMother } from "../../domain/user/UserMother"; // From tests/
+// import { UserMother } from '@shared/tests/domain/user/UserMother'; // Monorepo
+import { UserCreated } from "../../../src/domain/user/events/UserCreated"; // Non-monorepo
+// import { UserCreated } from '@shared/domain/user/events/UserCreated'; // Monorepo
+
+describe("CreateUser", () => {
+  let createUser: CreateUser;
+  let userRepository: UserRepositoryMock;
+  let eventBusService: EventBusServiceMock;
+
+  beforeEach(() => {
+    userRepository = new UserRepositoryMock();
+    eventBusService = new EventBusServiceMock();
+    createUser = new CreateUser(userRepository, eventBusService);
+  });
+
+  it("should create a user successfully", async () => {
+    const userData = {
+      email: "test@example.com",
+      name: "Test",
+      lastname: "User",
+    };
+
+    const result = await createUser.execute(userData);
+
+    expect(result.email).toBe(userData.email);
+    expect(result.name).toBe(userData.name);
+    expect(result.lastname).toBe(userData.lastname);
+    userRepository.assertSaveCalledWith(result);
+  });
+
+  it("should publish UserCreated event after successful creation", async () => {
+    const userData = {
+      email: "test@example.com",
+      name: "Test",
+      lastname: "User",
+    };
+
+    await createUser.execute(userData);
+
+    expect(eventBusService.publishEventMock).toHaveBeenCalledTimes(1);
+    const publishedEvent = eventBusService.publishEventMock.mock.calls[0][0];
+    expect(publishedEvent).toBeInstanceOf(UserCreated);
+  });
+});
+```
+
+---
+
+## 🔄 Domain Events Architecture
+
+### Domain Event Base Class
+
+```typescript
+// src/domain/shared/events/DomainEvent.ts (Non-monorepo)
+// OR packages/shared/src/domain/shared/events/DomainEvent.ts (Monorepo)
+export abstract class DomainEvent {
+  public readonly eventId: string;
+  public readonly occurredOn: Date;
+
+  constructor(public readonly attributes: Record<string, any>) {
+    this.eventId = crypto.randomUUID();
+    this.occurredOn = new Date();
+  }
+
+  get eventName(): string {
+    return this.constructor.name;
+  }
+
+  toPrimitives(): {
+    eventId: string;
+    eventName: string;
+    occurredOn: string;
+    attributes: Record<string, any>;
+  } {
+    return {
+      eventId: this.eventId,
+      eventName: this.eventName,
+      occurredOn: this.occurredOn.toISOString(),
+      attributes: this.attributes,
+    };
+  }
+}
+```
+
+### Specific Domain Event
+
+```typescript
+// src/domain/user/events/UserCreated.ts (Non-monorepo)
+// OR packages/shared/src/domain/user/events/UserCreated.ts (Monorepo)
+import { DomainEvent } from "../../shared/events/DomainEvent";
+import { UserContract } from "../contracts/UserContract";
+
+export class UserCreated extends DomainEvent {
+  constructor(attributes: { user: UserContract }) {
+    super(attributes);
+  }
+
+  get user(): UserContract {
+    return this.attributes.user;
+  }
+}
+```
+
+### Event Subscriber Pattern
+
+```typescript
+// src/domain/shared/events/DomainEventSubscriber.ts (Non-monorepo)
+// OR packages/shared/src/domain/shared/events/DomainEventSubscriber.ts (Monorepo)
+export interface DomainEventSubscriber<T extends DomainEvent> {
+  subscribedTo(): DomainEventClass[];
+  on(domainEvent: T): Promise<void>;
+}
+
+export type DomainEventClass = {
+  new (...args: any[]): DomainEvent;
+};
+```
+
+```typescript
+// src/application/user/events/SendWelcomeEmailOnUserCreated.ts (Non-monorepo)
+// OR packages/backend/src/application/user/events/SendWelcomeEmailOnUserCreated.ts (Monorepo)
+import { DomainEventSubscriber } from "../../../domain/shared/events/DomainEventSubscriber"; // Non-monorepo
+// import { DomainEventSubscriber } from '@shared/domain/shared/events/DomainEventSubscriber'; // Monorepo
+import { UserCreated } from "../../../domain/user/events/UserCreated"; // Non-monorepo
+// import { UserCreated } from '@shared/domain/user/events/UserCreated'; // Monorepo
+import { EmailService } from "../../../infrastructure/services/EmailService";
+
+export class SendWelcomeEmailOnUserCreated
+  implements DomainEventSubscriber<UserCreated>
+{
+  constructor(private emailService: EmailService) {}
+
+  subscribedTo(): DomainEventClass[] {
+    return [UserCreated];
+  }
+
+  async on(domainEvent: UserCreated): Promise<void> {
+    const user = domainEvent.user;
+
+    await this.emailService.send({
+      to: user.email,
+      subject: "Welcome!",
+      template: "welcome",
+      data: { name: user.name },
+    });
+  }
+}
+```
+
+---
+
+## 📁 Testing Best Practices
+
+### Test Organization
+
+```
+tests/
+├── application/                    # Use case tests
+│   └── {entity}/
+│       ├── Create{Entity}.test.ts
+│       ├── Find{Entity}ById.test.ts
+│       └── Update{Entity}.test.ts
+├── infrastructure/                 # Infrastructure tests
+│   ├── repositories/
+│   │   └── Drizzle{Entity}Repository.test.ts
+│   └── di/
+│       └── DIContainer.test.ts
+├── integration/                    # Integration tests
+│   └── {entity}.integration.test.ts
+└── domain/                         # Domain logic tests
+    └── {entity}/
+        ├── {Entity}.test.ts        # Domain logic tests
+        ├── {Entity}Mother.ts       # Test data factory
+        └── {Entity}RepositoryMock.ts # Repository mock
+```
+
+### Testing Principles
+
+1. **Use Real Objects in Tests**: Never use `vi.fn()` directly for use cases
+2. **Object Mothers**: Generate test data with descriptive methods
+3. **Repository Mocks**: Mock external dependencies, not business logic
+4. **Isolated Tests**: Each test should be independent
+5. **Test Naming**: Descriptive test names explaining behavior
+
+```typescript
+// ✅ CORRECT - Instantiate use case with mocked dependencies
+describe("FindUserById", () => {
+  let findUserById: FindUserById;
+  let userRepository: UserRepositoryMock;
+
+  beforeEach(() => {
+    userRepository = new UserRepositoryMock();
+    findUserById = new FindUserById(userRepository);
+  });
+
+  it("should return user when found", async () => {
+    const user = UserMother.basic();
+    userRepository.findByIdMock.mockResolvedValue(user);
+
+    const result = await findUserById.execute(user.id);
+
+    expect(result).toBe(user);
+    userRepository.assertFindByIdCalledWith(user.id);
+  });
+});
+
+// ❌ INCORRECT - Never mock use cases directly
+describe("FindUserById", () => {
+  let findUserById: vi.Mock;
+
+  beforeEach(() => {
+    findUserById = vi.fn(); // ❌ This breaks real behavior testing
+  });
+});
+```
+
+---
+
+## 🔧 Implementation Guidelines
+
+### 1. Domain Objects
+
+- **Extend Serializable**: All domain entities should extend the base Serializable class
+- **Private ID**: Use private `id_value` with public getter for encapsulation
+- **Factory Methods**: Provide `create()`, `fromPrimitives()`, and `fromJson()` methods
+- **Business Logic**: Include domain behavior methods (e.g., `isAdmin()`, `hasRole()`)
+- **Validation**: Validate invariants in constructor and business methods
+
+### 2. Contracts
+
+- **Separate Concerns**: Different contracts for different operations (Create, Update, List)
+- **Type Safety**: Use TypeScript utility types (`Partial`, `Required`, `Pick`)
+- **Consistency**: Follow naming conventions (`{Entity}Contract`, `Create{Entity}Contract`)
+
+### 3. Repositories
+
+- **Interface First**: Always define repository interface in domain contracts
+- **Simple Methods**: Keep repository methods focused and simple
+- **Error Handling**: Wrap database errors in domain-specific errors
+- **Null Returns**: Use `null` for not found cases, throw errors for failures
+
+### 4. Use Cases
+
+- **Single Responsibility**: Each use case should have one clear purpose
+- **Dependency Injection**: Accept dependencies through constructor
+- **Error Propagation**: Let domain errors bubble up, catch only infrastructure errors
+- **Event Publishing**: Publish domain events after successful operations
+
+### 5. API Handlers
+
+- **Thin Handlers**: Keep handlers minimal, delegate to use cases
+- **Validation**: Validate input using Zod schemas
+- **Error Handling**: Use centralized error handling
+- **Response Format**: Standardize response format across all endpoints
+
+### 6. Testing
+
+- **Test Behavior**: Focus on testing behavior, not implementation details
+- **Descriptive Names**: Use descriptive test and assertion method names
+- **Isolated Data**: Use Object Mothers to generate test data
+- **Mock Boundaries**: Only mock external dependencies (repositories, services)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Create New Domain Object
+
+1. Create domain entity in `src/domain/{entity}/{Entity}.ts` or `packages/shared/src/domain/{entity}/{Entity}.ts`
+2. Define contracts in `src/domain/{entity}/contracts/` or `packages/shared/src/domain/{entity}/contracts/`
+3. Create domain errors in `src/domain/{entity}/errors/` or `packages/shared/src/domain/{entity}/errors/`
+4. Implement Object Mother in `tests/domain/{entity}/{Entity}Mother.ts` or `packages/shared/tests/domain/{entity}/{Entity}Mother.ts`
+5. Create Repository Mock in `tests/domain/{entity}/{Entity}RepositoryMock.ts` or `packages/shared/tests/domain/{entity}/{Entity}RepositoryMock.ts`
+
+### 2. Implement Repository
+
+1. Create Drizzle repository in `src/infrastructure/repositories/Drizzle{Entity}Repository.ts` or `packages/backend/src/infrastructure/repositories/Drizzle{Entity}Repository.ts`
+2. Register in DI container in `InfrastructureContainer.ts`
+3. Add cache repository if needed in `src/infrastructure/repositories/cache/` or `packages/backend/src/infrastructure/repositories/cache/`
+
+### 3. Create Use Cases
+
+1. Implement use cases in `src/application/{entity}/` or `packages/backend/src/application/{entity}/`
+2. Register complex use cases in `UseCaseContainer.ts`
+3. Create tests in `tests/application/{entity}/` or `packages/backend/tests/application/{entity}/`
+
+### 4. Build API
+
+1. Create handlers in `src/infrastructure/api/` or `packages/backend/src/infrastructure/api/`
+2. Use DI container to resolve dependencies
+3. Follow RESTful conventions
+4. Add Swagger documentation
+
+---
+
+## 📋 Checklist for New Features
+
+### Domain Object
+
+- [ ] Entity extends Serializable
+- [ ] Private ID with public getter
+- [ ] Factory methods (`create`, `fromPrimitives`)
+- [ ] Business logic methods
+- [ ] Serialization methods (`toPrimitives`)
+- [ ] Contracts defined with TypeScript types
+- [ ] Repository interface in contracts
+- [ ] Domain-specific errors
+- [ ] Object Mother with descriptive methods
+- [ ] Repository Mock with assert methods
+
+### Application Layer
+
+- [ ] Use cases with single responsibility
+- [ ] Constructor dependency injection
+- [ ] Error handling and propagation
+- [ ] Domain event publishing (if applicable)
+- [ ] Unit tests with real objects and mocked dependencies
+
+### Infrastructure Layer
+
+- [ ] Repository implementation with error handling
+- [ ] DI container registration
+- [ ] API handlers with validation
+- [ ] Standardized response format
+- [ ] Integration tests
+
+### Documentation
+
+- [ ] Update API documentation
+- [ ] Add usage examples
+- [ ] Document domain events (if applicable)
+- [ ] Update architectural decisions
+
+---
+
+This architecture provides a solid foundation for building scalable, maintainable, and testable applications following Domain-Driven Design principles with clear separation of concerns and comprehensive testing strategies.

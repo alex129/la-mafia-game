@@ -1,30 +1,35 @@
 import type { APIRoute } from "astro";
-import { supabase } from "../../../services/supabase";
+import { PrismaGameRepository } from "@infrastructure/repositories/PrismaGameRepository";
+import { FindGameByIdWithPlayers } from "@application/game/FindGameByIdWithPlayers";
+import { GameNotFound } from "@domain/game/errors/GameNotFound";
+import { DatabaseError } from "@infrastructure/errors/DatabaseError";
+
+const gameRepository = new PrismaGameRepository();
+const findGameByIdWithPlayers = new FindGameByIdWithPlayers(gameRepository);
 
 export const GET: APIRoute = async ({ params }) => {
   try {
     const { id } = params;
 
-    // Get the game
-    const { data: game, error: gameError } = await supabase
-      .from("games")
-      .select("*")
-      .eq("id", id)
-      .single();
+    if (!id) {
+      return new Response(
+        JSON.stringify({
+          error: "Game ID is required",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
-    if (gameError) throw gameError;
-
-    // Get the players for this game
-    const { data: players, error: playersError } = await supabase
-      .from("players")
-      .select("*")
-      .eq("game_id", id);
-
-    if (playersError) throw playersError;
+    const game = await findGameByIdWithPlayers.execute(id);
 
     return new Response(
       JSON.stringify({
-        game: { ...game, players },
+        game: game.toPrimitives(),
       }),
       {
         status: 200,
@@ -34,12 +39,30 @@ export const GET: APIRoute = async ({ params }) => {
       }
     );
   } catch (error) {
+    console.error("Error fetching game:", error);
+
+    if (error instanceof GameNotFound) {
+      return new Response(
+        JSON.stringify({
+          error: error.message,
+        }),
+        {
+          status: error.httpCode,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const statusCode = error instanceof DatabaseError ? error.httpCode : 500;
+
     return new Response(
       JSON.stringify({
         error: "Error fetching game",
       }),
       {
-        status: 500,
+        status: statusCode,
         headers: {
           "Content-Type": "application/json",
         },

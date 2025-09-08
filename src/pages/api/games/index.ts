@@ -1,18 +1,23 @@
 import type { APIRoute } from "astro";
-import { supabase } from "../../../services/supabase";
+import { PrismaGameRepository } from "@infrastructure/repositories/PrismaGameRepository";
+import { PrismaPlayerRepository } from "@infrastructure/repositories/PrismaPlayerRepository";
+import { FindAllGames } from "@application/game/FindAllGames";
+import { CreateGame } from "@application/game/CreateGame";
+import { DatabaseError } from "@infrastructure/errors/DatabaseError";
+
+const gameRepository = new PrismaGameRepository();
+const playerRepository = new PrismaPlayerRepository();
+const findAllGames = new FindAllGames(gameRepository);
+const createGame = new CreateGame(gameRepository, playerRepository);
 
 export const GET: APIRoute = async () => {
   try {
-    const { data: games, error } = await supabase
-      .from("games")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
+    const games = await findAllGames.execute();
+    const gamesData = games.map((game) => game.toPrimitives());
 
     return new Response(
       JSON.stringify({
-        games,
+        games: gamesData,
       }),
       {
         status: 200,
@@ -22,12 +27,15 @@ export const GET: APIRoute = async () => {
       }
     );
   } catch (error) {
+    console.error("Error fetching games:", error);
+    const statusCode = error instanceof DatabaseError ? error.httpCode : 500;
+
     return new Response(
       JSON.stringify({
         error: "Error fetching games",
       }),
       {
-        status: 500,
+        status: statusCode,
         headers: {
           "Content-Type": "application/json",
         },
@@ -38,32 +46,17 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { players, password } = await request.json();
+    const { players, password, name } = await request.json();
 
-    const { data: game, error: gameError } = await supabase
-      .from("games")
-      .insert({ password })
-      .select()
-      .single();
-
-    if (gameError) throw gameError;
-
-    // Create players for the game
-    const playersWithGameId = players.map((player: any) => ({
-      ...player,
-      game_id: game.id,
-    }));
-
-    const { data: createdPlayers, error: playersError } = await supabase
-      .from("players")
-      .insert(playersWithGameId)
-      .select();
-
-    if (playersError) throw playersError;
+    const game = await createGame.execute({
+      password,
+      name,
+      players,
+    });
 
     return new Response(
       JSON.stringify({
-        game: { ...game, players: createdPlayers },
+        game: game.toPrimitives(),
       }),
       {
         status: 200,
@@ -73,13 +66,15 @@ export const POST: APIRoute = async ({ request }) => {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error creating game:", error);
+    const statusCode = error instanceof DatabaseError ? error.httpCode : 500;
+
     return new Response(
       JSON.stringify({
         error: "Error creating game",
       }),
       {
-        status: 500,
+        status: statusCode,
         headers: {
           "Content-Type": "application/json",
         },

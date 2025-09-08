@@ -59,14 +59,14 @@ describe.skip("GameForm", () => {
       error: {
         issues: [mockError],
         message: "Name is required",
-        format: () => ({}),
-        toJSON: () => ({}),
+        format: () => ({} as any),
+        toJSON: () => ({} as any),
         toString: () => "Name is required",
         isEmpty: false,
         addIssue: () => {},
         addIssues: () => {},
         clear: () => {},
-        flatten: () => ({}),
+        flatten: () => ({} as any),
       },
     });
 
@@ -126,7 +126,7 @@ describe.skip("GameForm", () => {
       data: mockGame,
     });
     vi.mocked(GameService.createGame).mockResolvedValueOnce({
-      player: { name: "Test Player" },
+      players: [{ name: "Test Player" }],
       target: { name: "Target Player" },
       action: "vote",
       mafia: [{ name: "Mafia Player" }],
@@ -235,7 +235,7 @@ describe.skip("GameForm", () => {
       data: mockGame,
     });
     vi.mocked(GameService.createGame).mockResolvedValueOnce({
-      player: { name: "Test Player" },
+      players: [{ name: "Test Player" }],
       target: { name: "Target Player" },
       action: "vote",
       mafia: [{ name: "Mafia Player" }],

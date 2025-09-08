@@ -1,8 +1,7 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { flushPromises, mount } from "@vue/test-utils";
 import PlayerDetails from "@/components/player/PlayerDetails.vue";
-import { GameService } from "@/services/game";
 import { config } from "@/config";
+import { flushPromises, mount } from "@vue/test-utils";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;

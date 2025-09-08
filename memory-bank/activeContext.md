@@ -2,14 +2,17 @@
 
 ## Current Focus
 
-Initial project setup and memory bank creation. The project is in its early stages with the basic structure and dependencies in place.
+Complete implementation of clean architecture with application layer use cases. The project now follows full DDD patterns with separation of concerns between domain, application, and infrastructure layers.
 
 ## Recent Changes
 
-- Project initialization with Astro
-- Basic project structure setup
-- Dependencies installation
-- Memory bank initialization
+- Complete refactoring from Supabase to Prisma
+- Implementation of clean architecture with DDD patterns
+- Domain layer created with Game and Player entities
+- Infrastructure layer with Prisma repositories
+- Application layer with concrete use cases implemented
+- All API endpoints refactored to use application use cases
+- Removed all code comments as requested
 
 ## Active Decisions
 
@@ -17,19 +20,22 @@ Initial project setup and memory bank creation. The project is in its early stag
 
    - Astro as the base framework
    - Vue.js for interactive components
-   - Supabase for backend services
+   - Prisma for database ORM (migrated from Supabase)
+   - PostgreSQL as database
    - TailwindCSS for styling
 
 2. Architecture
 
-   - Component-based frontend
-   - Real-time backend with Supabase
+   - Clean Architecture with DDD patterns
+   - Domain-driven design implementation
+   - Hexagonal architecture with repositories
    - File-based routing with Astro
 
 3. Development Approach
    - TypeScript for type safety
-   - Modern development tools
-   - Comprehensive documentation
+   - Domain entities with business logic
+   - Repository pattern for data access
+   - Error handling with domain exceptions
 
 ## Current Considerations
 
@@ -57,23 +63,23 @@ Initial project setup and memory bank creation. The project is in its early stag
 
 1. Immediate Tasks
 
-   - Set up Supabase project
-   - Create database schema
-   - Implement authentication
-   - Design basic UI components
+   - Set up environment variables for DATABASE_URL
+   - Run database migrations with Prisma
+   - Test the new use case-based API endpoints
+   - Update frontend components to work with new API
 
 2. Short-term Goals
 
-   - Basic game mechanics
-   - User authentication
-   - Game room creation
-   - Real-time updates
+   - Implement dependency injection container
+   - Add comprehensive testing for use cases
+   - Implement authentication with the new architecture
+   - Add real-time features using WebSockets
 
 3. Medium-term Goals
-   - Complete game flow
-   - Role management
-   - Chat system
-   - Game state persistence
+   - Add caching layer with Redis
+   - Create event-driven architecture with domain events
+   - Add monitoring and logging
+   - Implement API rate limiting and security
 
 ## Active Issues
 
