@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { Game } from "@/services/supabase";
+import type { GameContract } from "@domain/game/contracts/GameContract";
+import type { PlayerContract } from "@domain/player/contracts/PlayerContract";
 import { verifyGamePassword } from "@/services/api";
 import BackButton from "@/components/ui/BackButton.vue";
 import PasswordVerificationForm from "@/components/forms/PasswordVerificationForm.vue";
@@ -10,7 +11,7 @@ const props = defineProps<{
   gameId: string;
 }>();
 
-const game = ref<Game | null>(null);
+const game = ref<(GameContract & { players: PlayerContract[] }) | null>(null);
 const origin = typeof window !== "undefined" ? window.location.origin : "";
 const isVerified = ref(false);
 const isLoading = ref(true);

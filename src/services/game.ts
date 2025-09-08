@@ -1,4 +1,5 @@
-import { type GameAssignment, GameSchema, type Player } from "../schemas/game";
+import { type GameAssignment, GameSchema } from "../schemas/game";
+import type { PlayerContract } from "@domain/player/contracts/PlayerContract";
 import { createGame } from "./api";
 import bcrypt from "bcryptjs";
 
@@ -27,7 +28,7 @@ export class GameService {
   }
 
   public static async createGame(
-    players: Player[],
+    players: PlayerContract[],
     password: string
   ): Promise<GameAssignment[]> {
     const result = GameSchema.safeParse({ players, password });
@@ -44,27 +45,27 @@ export class GameService {
 
     let availablePlayers = [...players];
     for (const player of players) {
-      const availableTargets = availablePlayers.filter((p) => p.name !== player.name);
+      const availableTargets = availablePlayers.filter(
+        (p) => p.name !== player.name
+      );
 
       const targetIndex = Math.floor(Math.random() * availableTargets.length);
       const target = availableTargets[targetIndex];
 
       availablePlayers = availablePlayers.filter((p) => p.name !== target.name);
 
-      console.log(player, availablePlayers);
-
       assignments.push({
         player,
         target,
-        action: '',
+        action: "",
         mafia: [player],
       });
     }
 
-    const actions = await this.generateActions(players.length);
-    assignments.forEach((assignment, index) => {
-      assignment.action = actions[index];
-    });
+    // const actions = await this.generateActions(players.length);
+    // assignments.forEach((assignment, index) => {
+    //   assignment.action = actions[index];
+    // });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

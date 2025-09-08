@@ -9,20 +9,3 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
-
-export interface Game {
-  id: string;
-  name: string;
-  created_at: string;
-  password: string;
-  players: Player[];
-}
-
-export interface Player {
-  id: string;
-  name: string;
-  target: string;
-  action: string;
-  game_id: string;
-  regenerate_action_times?: number;
-}

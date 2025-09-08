@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import type { Player } from "@services/supabase";
+import type { PlayerContract } from "@domain/player/contracts/PlayerContract";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 import { GameService } from "@/services/game";
 import { config } from "@/config";
@@ -9,7 +9,7 @@ const props = defineProps<{
   playerId: string;
 }>();
 
-const player = ref<Player | null>(null);
+const player = ref<PlayerContract | null>(null);
 const isRegenerating = ref(false);
 const error = ref<string | null>(null);
 const regenerateActionTimes = computed(

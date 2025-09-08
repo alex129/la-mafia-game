@@ -26,7 +26,7 @@ model Player {
   id                       String  @id @default(cuid())
   name                     String
   target                   String
-  action                   String
+  action                   String?
   game_id                  String
   regenerate_action_times  Int?    @default(0)
   

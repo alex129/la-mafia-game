@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import type { Game } from "@/services/supabase";
+import type { GameContract } from "@domain/game/contracts/GameContract";
 import CleanupButton from "@/components/ui/CleanupButton.vue";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/vue/24/outline";
 
-const games = ref<Game[]>([]);
+const games = ref<GameContract[]>([]);
 const isLoading = ref(true);
 
 async function fetchGames() {

@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import { GameSchema, PlayerSchema, type Player } from "@/schemas/game";
-import { GameService } from "@/services/game";
-import { PlusIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
-import RetroButton from "@/components/ui/RetroButton.vue";
-import RetroInput from "@/components/ui/RetroInput.vue";
-import RetroCard from "@/components/ui/RetroCard.vue";
 import PlayersList from "@/components/player/PlayersList.vue";
+import RetroButton from "@/components/ui/RetroButton.vue";
+import RetroCard from "@/components/ui/RetroCard.vue";
+import RetroInput from "@/components/ui/RetroInput.vue";
+import { GameSchema, PlayerSchema } from "@/schemas/game";
+import type { PlayerContract } from "@domain/player/contracts/PlayerContract";
+import { GameService } from "@/services/game";
+import { ArrowPathIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { onUnmounted, ref } from "vue";
 
-const players = ref<Player[]>([]);
-const newPlayer = ref<Player>({ name: "" });
+const players = ref<PlayerContract[]>([]);
+const newPlayer = ref<PlayerContract>({
+  id: "",
+  name: "",
+  target: "",
+  action: "",
+  game_id: "",
+});
 const errors = ref<string[]>([]);
 const nameError = ref<string>("");
 const passwordError = ref<string>("");
@@ -74,7 +81,7 @@ const validatePassword = () => {
 const addPlayer = () => {
   if (validatePlayer()) {
     players.value.push(newPlayer.value);
-    newPlayer.value = { name: "" };
+    newPlayer.value = { id: "", name: "", target: "", action: "", game_id: "" };
     errors.value = [];
   }
 };
@@ -95,14 +102,14 @@ const createGameHandler = async () => {
     });
 
     if (!result.success) {
-      errors.value = result.error.errors.map((e) => e.message);
+      errors.value = result.error.errors.map((e: any) => e.message);
       return;
     }
 
     isLoading.value = true;
     errors.value = [];
 
-    await GameService.createGame(result.data.players, result.data.password);
+    await GameService.createGame(players.value, password.value);
     gameCreated.value = true;
     startCountdown();
   } catch (error) {
