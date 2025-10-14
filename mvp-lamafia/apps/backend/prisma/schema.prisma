@@ -1,0 +1,285 @@
+// Prisma Schema for La Mafia Game
+// Database: PostgreSQL (Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User & Authentication
+// ============================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  googleId      String?   @unique
+  locale        String    @default("es") // Language preference
+  isPremium     Boolean   @default(false)
+  premiumSince  DateTime?
+
+  // Monetization
+  rerollsAvailable Int     @default(0) // Purchased rerolls
+  unlockedCategories String[] // Array of category IDs
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  gamesAsGM     Game[]    @relation("GameMaster")
+  players       Player[]
+  createdChallenges Challenge[]
+  feedback      Feedback[]
+
+  @@map("users")
+}
+
+// ============================================
+// Game Management
+// ============================================
+
+model Game {
+  id            String    @id @default(uuid())
+  password      String    // Game access password
+  duration      Int       // Duration in seconds (e.g., 86400 for 24h)
+  status        GameStatus @default(SETUP)
+
+  gameMasterId  String
+  gameMaster    User      @relation("GameMaster", fields: [gameMasterId], references: [id])
+
+  selectedCategories String[] // Array of category IDs
+
+  startedAt     DateTime?
+  endedAt       DateTime?
+  winnerId      String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  players       Player[]
+  mafias        Mafia[]
+
+  @@map("games")
+}
+
+enum GameStatus {
+  SETUP         // Game being configured
+  READY         // Ready to start
+  ACTIVE        // Game in progress
+  FINISHED      // Game completed
+}
+
+// ============================================
+// Players & Participation
+// ============================================
+
+model Player {
+  id            String    @id @default(uuid())
+
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  gameId        String
+  game          Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  // Current mission/target
+  targetId      String?   // Another player ID
+  target        Player?   @relation("PlayerTarget", fields: [targetId], references: [id])
+  hunters       Player[]  @relation("PlayerTarget")
+
+  actionId      String?   // Current mission
+  action        Challenge? @relation(fields: [actionId], references: [id])
+
+  // Mafia membership
+  mafiaId       String?
+  mafia         Mafia?    @relation(fields: [mafiaId], references: [id])
+
+  // Reroll tracking
+  rerollsUsed   Int       @default(0)
+  previousActions String[] // IDs of previously assigned actions
+
+  // Recruitment status
+  recruitmentStatus RecruitmentStatus @default(NONE)
+  recruitedBy   String?   // Player ID who recruited them
+  recruitedAt   DateTime?
+
+  joinedAt      DateTime  @default(now())
+
+  @@unique([userId, gameId])
+  @@map("players")
+}
+
+enum RecruitmentStatus {
+  NONE          // Not recruited
+  PENDING       // Waiting for verification
+  CONFIRMED     // Successfully recruited
+  DENIED        // Recruitment denied
+}
+
+// ============================================
+// Mafia System
+// ============================================
+
+model Mafia {
+  id            String    @id @default(uuid())
+  name          String    // e.g., "Mafia PlayerA"
+
+  leaderId      String    // Original creator
+
+  gameId        String
+  game          Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  members       Player[]
+
+  @@map("mafias")
+}
+
+// ============================================
+// Challenges & Categories
+// ============================================
+
+model Category {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  description   String?
+  icon          String?
+
+  isFree        Boolean   @default(true)
+  price         Float?    // Price in EUR if paid
+
+  isActive      Boolean   @default(true)
+
+  // i18n support
+  nameEn        String?
+  nameEs        String?
+  descriptionEn String?
+  descriptionEs String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  challenges    Challenge[]
+
+  @@map("categories")
+}
+
+model Challenge {
+  id            String    @id @default(uuid())
+
+  // Challenge text (i18n)
+  textEs        String
+  textEn        String
+
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+
+  // User-generated content
+  isUserGenerated Boolean @default(false)
+  creatorId     String?
+  creator       User?     @relation(fields: [creatorId], references: [id])
+
+  status        ChallengeStatus @default(ACTIVE)
+
+  difficulty    Int       @default(3) // 1-5 scale
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  players       Player[]
+
+  @@map("challenges")
+}
+
+enum ChallengeStatus {
+  PENDING       // User-submitted, awaiting approval
+  ACTIVE        // Approved and available
+  REJECTED      // Rejected by admin
+  ARCHIVED      // No longer in use
+}
+
+// ============================================
+// Feedback System
+// ============================================
+
+model Feedback {
+  id            String    @id @default(uuid())
+
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  content       String
+  type          FeedbackType @default(GENERAL)
+
+  categoryId    String?   // If category-specific feedback
+
+  status        FeedbackStatus @default(PENDING)
+
+  createdAt     DateTime  @default(now())
+
+  @@map("feedback")
+}
+
+enum FeedbackType {
+  GENERAL
+  CATEGORY
+  BUG
+  FEATURE
+}
+
+enum FeedbackStatus {
+  PENDING
+  REVIEWED
+  ADDRESSED
+}
+
+// ============================================
+// Monetization Tracking
+// ============================================
+
+model Purchase {
+  id            String    @id @default(uuid())
+
+  userId        String
+  productType   ProductType
+  productId     String    // Category ID, reroll pack, etc.
+
+  amount        Float     // Amount in EUR
+  currency      String    @default("EUR")
+
+  status        PurchaseStatus @default(PENDING)
+
+  transactionId String?   @unique // Payment provider transaction ID
+
+  createdAt     DateTime  @default(now())
+  completedAt   DateTime?
+
+  @@map("purchases")
+}
+
+enum ProductType {
+  AD_REMOVAL
+  REROLL_SINGLE
+  REROLL_PACK
+  CATEGORY
+  CATEGORY_BUNDLE
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}

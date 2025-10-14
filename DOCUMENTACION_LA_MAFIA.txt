@@ -1,0 +1,316 @@
+===============================================================================
+                           DOCUMENTACIÓN DE LA MAFIA
+                      Guía Completa del Juego de Deducción Social
+===============================================================================
+
+█ ¿QUÉ ES LA MAFIA?
+
+La Mafia es un fascinante juego de deducción social que enfrenta a dos equipos:
+la MAFIA (minoría) y los CIUDADANOS (mayoría). Es un juego de psicología,
+estrategia y engaño donde los jugadores deben usar su astucia para sobrevivir.
+
+El objetivo es simple pero emocionante:
+• Los CIUDADANOS deben identificar y eliminar a todos los mafiosos
+• Los MAFIOSOS deben eliminar a suficientes ciudadanos para igualar su número
+
+█ HISTORIA Y ORIGEN
+
+Originalmente conocido como "Werewolf" o "Hombre Lobo", este juego fue creado
+en la década de 1980 por Dmitry Davidoff en la Universidad Estatal de Moscú.
+Se popularizó mundialmente y ha evolucionado con múltiples variantes y roles.
+
+█ ¿CÓMO SE JUEGA?
+
+┌─ FASES DEL JUEGO ─────────────────────────────────────────────────────────┐
+│                                                                           │
+│ 1. NOCHE: Los mafiosos eliminan secretamente a un ciudadano              │
+│ 2. DÍA: Todos discuten quién podría ser mafioso                         │
+│ 3. VOTACIÓN: El pueblo vota para eliminar a un sospechoso               │
+│ 4. Se repite hasta que un equipo gane                                    │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘
+
+█ ROLES PRINCIPALES
+
+🔴 MAFIOSOS
+• Conocen la identidad de otros mafiosos
+• Eliminan ciudadanos durante la noche
+• Deben fingir ser ciudadanos durante el día
+• Ganan cuando igualan o superan a los ciudadanos
+
+🔵 CIUDADANOS
+• No conocen quién es quién al inicio
+• Deben identificar a los mafiosos
+• Votan durante el día para eliminar sospechosos
+• Ganan cuando eliminan a todos los mafiosos
+
+🟡 ROLES ESPECIALES (Variantes)
+• DETECTIVE: Puede investigar a un jugador cada noche
+• DOCTOR: Puede proteger a un jugador de ser eliminado
+• ALCALDE: Su voto cuenta doble
+• BUFÓN: Gana si es eliminado por votación
+
+█ EJEMPLO DE PARTIDA TÍPICA
+
+Imaginemos una partida de 8 jugadores:
+
+┌─ CONFIGURACIÓN INICIAL ───────────────────────────────────────────────────┐
+│ • 2 Mafiosos: Ana y Carlos                                                │
+│ • 1 Detective: Luis                                                       │
+│ • 1 Doctor: María                                                         │
+│ • 4 Ciudadanos: Pedro, Rosa, Diego, Elena                                │
+└───────────────────────────────────────────────────────────────────────────┘
+
+NOCHE 1:
+- Los mafiosos (Ana y Carlos) eligen eliminar a Pedro
+- El detective (Luis) investiga a Ana y descubre que es mafiosa
+- El doctor (María) protege a Rosa
+
+DÍA 1:
+- Se anuncia que Pedro fue eliminado
+- Luis (detective) sabe que Ana es mafiosa pero debe ser discreto
+- Todos discuten y votan
+- Resultado: Ana es eliminada (Mafioso eliminado = ¡Bien por los ciudadanos!)
+
+NOCHE 2:
+- Carlos (único mafioso restante) elimina a Luis
+- María protege a Diego
+
+DÍA 2:
+- Se anuncia que Luis fue eliminado
+- Quedan: Carlos (mafioso), María, Rosa, Diego, Elena (ciudadanos)
+- Los ciudadanos deben identificar a Carlos
+- Si votan correctamente, ganan. Si votan mal, Carlos se acerca a la victoria
+
+█ ¿PARA QUÉ SIRVE ESTA PLATAFORMA?
+
+🌐 CONEXIÓN GLOBAL
+Ya no necesitas estar físicamente presente para jugar. Conecta con amigos
+y extraños de todo el mundo desde la comodidad de tu hogar.
+
+🤖 AUTOMATIZACIÓN INTELIGENTE
+• Asignación automática de roles
+• Gestión de turnos y fases
+• Seguimiento del estado del juego
+• Prevención de trampas
+
+⚡ TIEMPO REAL
+Todas las acciones se sincronizan instantáneamente entre todos los jugadores.
+No más confusión sobre quién votó qué o cuándo termina cada fase.
+
+📱 ACCESIBILIDAD
+Juega desde cualquier dispositivo: móvil, tablet o computadora.
+La interfaz se adapta perfectamente a tu pantalla.
+
+█ BENEFICIOS DE LA VERSION DIGITAL
+
+┌─ VENTAJAS SOBRE EL JUEGO TRADICIONAL ────────────────────────────────────┐
+│                                                                           │
+│ ✓ No necesitas papel ni objetos físicos                                  │
+│ ✓ Los roles se asignan automática y aleatoriamente                       │
+│ ✓ Imposible hacer trampa viendo cartas                                   │
+│ ✓ Chat integrado para comunicación                                       │
+│ ✓ Historial de acciones y votaciones                                     │
+│ ✓ Timers automáticos para mantener el ritmo                             │
+│ ✓ Múltiples partidas simultáneas                                         │
+│ ✓ Estadísticas y puntuaciones                                            │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘
+
+█ CASOS DE USO
+
+🎉 FIESTAS Y REUNIONES VIRTUALES
+Perfecto para animar fiestas en línea, reuniones de trabajo o encuentros
+familiares cuando no pueden estar juntos físicamente.
+
+🎓 HERRAMIENTA EDUCATIVA
+Excelente para enseñar:
+• Pensamiento lógico y deductivo
+• Habilidades de comunicación
+• Trabajo en equipo
+• Psicología social
+
+👥 TEAM BUILDING
+Ideal para equipos de trabajo que buscan:
+• Mejorar la comunicación
+• Desarrollar confianza
+• Practicar la toma de decisiones grupales
+• Divertirse mientras se conocen mejor
+
+🎮 ENTRETENIMIENTO CASUAL
+Para jugadores que buscan:
+• Una experiencia social sin compromiso largo
+• Juegos que ejerciten la mente
+• Interacción con otros jugadores
+• Diversión sin necesidad de habilidades técnicas
+
+█ EJEMPLOS DE SITUACIONES DIVERTIDAS
+
+🕵️ EL DETECTIVE NOVATO
+Luis es detective por primera vez. Investiga a María la primera noche y
+descubre que es ciudadana. El segundo día, convencido de su habilidad,
+acusa públicamente a Rosa de ser mafiosa... ¡pero Rosa también es ciudadana!
+Los mafiosos se aprovechan de la confusión para ganar.
+
+🎭 EL MAFIOSO ACCIDENTAL
+Ana es nueva en el juego y le toca ser mafiosa. Cuando llega el momento de
+eliminar a alguien, ¡vota por su compañero mafioso por error! Su compañero
+Carlos tiene que fingir sorpresa mientras internamente piensa "¡Nooo!"
+
+🤔 EL DOCTOR INDECISO
+María es doctora y cada noche debe elegir a quién proteger. La primera noche
+protege a Luis, quien resulta ser detective. La segunda noche protege a Carlos,
+¡quien resulta ser mafioso! Sin saberlo, ha ayudado a ambos bandos.
+
+█ ESTRATEGIAS Y CONSEJOS
+
+Para CIUDADANOS:
+• Observa los patrones de votación
+• Cuestiona las inconsistencias en las historias
+• No reveles información importante muy pronto
+• Trabaja en equipo pero desconfía de todos
+
+Para MAFIOSOS:
+• Mantén tu historia simple y consistente
+• No votes siempre junto a otros mafiosos
+• Finge sorpresa cuando alguien es eliminado
+• Siembra dudas sobre jugadores inocentes
+
+Para ROLES ESPECIALES:
+• Detective: No reveles tu identidad demasiado pronto
+• Doctor: Protege a jugadores valiosos pero varía tus elecciones
+• Alcalde: Usa tu voto doble estratégicamente
+
+█ PSICOLOGÍA DEL JUEGO
+
+🧠 ASPECTOS MENTALES
+• Lectura de microexpresiones (en versión presencial)
+• Análisis de patrones de comportamiento
+• Gestión de la presión psicológica
+• Habilidades de persuasión
+
+😰 MANEJO DEL ESTRÉS
+Es normal sentirse nervioso, especialmente como mafioso. Algunos consejos:
+• Respira profundo antes de hablar
+• Mantén la calma aunque te acusen
+• Usa el humor para relajar la tensión
+• Recuerda que es solo un juego
+
+🎯 DESARROLLO DE HABILIDADES
+• Comunicación efectiva
+• Pensamiento crítico
+• Trabajo en equipo
+• Liderazgo bajo presión
+
+█ VARIANTES POPULARES
+
+🌙 MAFIA CLÁSICA
+La versión original con ciudadanos y mafiosos únicamente.
+
+🔍 MAFIA CON DETECTIVE
+Añade el rol de detective que puede investigar jugadores.
+
+⚕️ MAFIA CON DOCTOR
+Incluye un doctor que puede proteger jugadores.
+
+🏛️ MAFIA COMPLETA
+Todos los roles especiales: detective, doctor, alcalde, etc.
+
+🎪 MAFIA TEMÁTICA
+Versiones con temáticas específicas: vampiros vs cazadores,
+aliens vs humanos, piratas vs marines, etc.
+
+█ ETIQUETA Y BUENAS PRÁCTICAS
+
+✅ QUÉ HACER:
+• Respetar a todos los jugadores
+• Mantener las discusiones civilizadas
+• No revelar información después de ser eliminado
+• Jugar hasta el final, sin abandonar
+• Aceptar la derrota con deportividad
+
+❌ QUÉ EVITAR:
+• Insultos o ataques personales
+• Comunicación externa al juego (WhatsApp, etc.)
+• Revelar información fuera del juego
+• Abandono cuando las cosas van mal
+• Tomarse las acusaciones como algo personal
+
+█ MÉTRICAS Y EVOLUCIÓN DEL JUGADOR
+
+📊 ESTADÍSTICAS TÍPICAS
+• Ratio de victoria como ciudadano vs mafioso
+• Precisión como detective
+• Efectividad como doctor
+• Veces que sobreviviste hasta el final
+• Partidas organizadas y lideradas
+
+🏆 PROGRESIÓN
+• Principiante: Aprender las reglas básicas
+• Intermedio: Desarrollar estrategias
+• Avanzado: Leer comportamientos
+• Experto: Liderar discusiones
+• Maestro: Adaptarse a cualquier situación
+
+█ IMPACTO SOCIAL Y BENEFICIOS
+
+🤝 CONSTRUCCIÓN DE RELACIONES
+El juego crea vínculos únicos entre jugadores. Compartir la tensión de una
+partida, colaborar para resolver el misterio, o incluso engañar exitosamente
+crea memorias compartidas que fortalecen amistades.
+
+🎭 DESARROLLO PERSONAL
+• Mejora la confianza para hablar en público
+• Desarrolla habilidades de negociación
+• Enseña a manejar la presión
+• Fortalece el pensamiento estratégico
+
+🌍 COMUNIDAD GLOBAL
+Únete a una comunidad mundial de jugadores que comparten la pasión por
+este fascinante juego de deducción social.
+
+█ PREGUNTAS FRECUENTES
+
+Q: ¿Cuánto dura una partida?
+A: Entre 20-45 minutos dependiendo del número de jugadores y roles.
+
+Q: ¿Cuántos jugadores se necesitan?
+A: Mínimo 5, ideal entre 8-12, máximo varía según la plataforma.
+
+Q: ¿Es difícil de aprender?
+A: Las reglas básicas se aprenden en 5 minutos, pero dominar el juego
+   lleva tiempo y práctica.
+
+Q: ¿Pueden jugar niños?
+A: Sí, es apropiado para niños de 10+ años con supervisión.
+
+Q: ¿Se necesita experiencia previa?
+A: No, cada partida es una experiencia nueva para todos.
+
+█ CONCLUSIÓN
+
+La Mafia es más que un simple juego: es una experiencia social que combina
+estrategia, psicología y diversión. Esta plataforma digital lleva esta
+experiencia clásica al siglo XXI, haciéndola accesible, justa y emocionante
+para jugadores de todo el mundo.
+
+Ya seas un veterano del juego o un completo novato, cada partida ofrece
+nuevos desafíos, momentos emocionantes y la oportunidad de demostrar tus
+habilidades de deducción social.
+
+¡Prepárate para descubrir quién puedes confiar... y quién está mintiendo!
+
+===============================================================================
+                              ¡BIENVENIDO A LA MAFIA!
+                         Donde la confianza es un lujo...
+                           y la supervivencia es todo.
+===============================================================================
+
+Versión: 1.0
+Creado: Septiembre 2025
+Plataforma: La Mafia Game Web
+
+Para más información técnica, consulta la documentación de desarrollo
+en el directorio memory-bank/ del proyecto.
+
+

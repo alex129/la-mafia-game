@@ -63,9 +63,10 @@ export class GameService {
     }
 
     // const actions = await this.generateActions(players.length);
-    // assignments.forEach((assignment, index) => {
-    //   assignment.action = actions[index];
-    // });
+    assignments.forEach((assignment, index) => {
+      // assignment.action = actions[index];
+      assignment.action = "Cantar una canción de estopa";
+    });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

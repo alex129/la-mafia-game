@@ -13,6 +13,7 @@ Complete implementation of clean architecture with application layer use cases. 
 - Application layer with concrete use cases implemented
 - All API endpoints refactored to use application use cases
 - Removed all code comments as requested
+- Created comprehensive project documentation (DOCUMENTACION_LA_MAFIA.txt) explaining what La Mafia is, how it works, and the platform's benefits
 
 ## Active Decisions
 

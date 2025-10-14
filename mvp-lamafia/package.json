@@ -1,0 +1,36 @@
+{
+  "name": "la-mafia-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "La Mafia Game - MVP monorepo",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:mobile": "pnpm --filter mobile dev",
+    "build": "pnpm --recursive build",
+    "build:backend": "pnpm --filter backend build",
+    "build:mobile": "pnpm --filter mobile build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "prisma:generate": "pnpm --filter backend prisma:generate",
+    "prisma:migrate": "pnpm --filter backend prisma:migrate",
+    "prisma:studio": "pnpm --filter backend prisma:studio",
+    "clean": "pnpm --recursive clean && rm -rf node_modules"
+  },
+  "keywords": [
+    "game",
+    "social",
+    "mobile",
+    "mafia"
+  ],
+  "author": "La Mafia Game Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}

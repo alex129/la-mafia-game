@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist --target bun",
+    "start": "NODE_ENV=production bun dist/index.js",
+    "test": "bun test",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "bun run prisma/seed.ts"
+  },
+  "dependencies": {
+    "elysia": "latest",
+    "@elysiajs/cors": "latest",
+    "@elysiajs/jwt": "latest",
+    "@elysiajs/swagger": "latest",
+    "@prisma/client": "^5.8.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "prisma": "^5.8.1"
+  }
+}
